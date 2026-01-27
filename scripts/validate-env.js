@@ -13,26 +13,33 @@ const requiredEnvVarsServer = [
   'POSTGRES_URL',
 ]
 
-// Check .env.local exists
+// Check .env.local exists (only for local development, not in CI)
+const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true'
 const envLocalPath = path.join(process.cwd(), '.env.local')
-if (!fs.existsSync(envLocalPath)) {
-  console.error('❌ .env.local file not found!')
-  console.error('   Please create a .env.local file with the required environment variables.')
-  console.error('   You can use .env.example as a template.')
-  process.exit(1)
+
+let envVars = {}
+
+// In CI/GitHub Actions, skip .env.local check and use process.env directly
+if (!isCI) {
+  if (!fs.existsSync(envLocalPath)) {
+    console.error('❌ .env.local file not found!')
+    console.error('   Please create a .env.local file with the required environment variables.')
+    console.error('   You can use .env.example as a template.')
+    process.exit(1)
+  }
+
+  // Load .env.local for local development
+  const envLocalContent = fs.readFileSync(envLocalPath, 'utf-8')
+  envVars = Object.fromEntries(
+    envLocalContent
+      .split('\n')
+      .filter((line) => line && !line.startsWith('#'))
+      .map((line) => line.split('='))
+      .filter(([key]) => key)
+  )
 }
 
-// Load .env.local
-const envLocalContent = fs.readFileSync(envLocalPath, 'utf-8')
-const envVars = Object.fromEntries(
-  envLocalContent
-    .split('\n')
-    .filter((line) => line && !line.startsWith('#'))
-    .map((line) => line.split('='))
-    .filter(([key]) => key)
-)
-
-// Check required environment variables
+// Check required environment variables (from .env.local or process.env)
 const missingVars = [
   ...requiredEnvVars,
   ...requiredEnvVarsServer,
