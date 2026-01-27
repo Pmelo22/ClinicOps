@@ -135,9 +135,6 @@ jobs:
         
       - name: 🏗️ Build do projeto
         run: pnpm build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder' }}
           
       - name: 📝 Comment no PR (se houver erros)
         if: failure() && github.event_name == 'pull_request'
