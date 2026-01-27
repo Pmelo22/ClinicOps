@@ -1,0 +1,254 @@
+name: 🔍 CI/CD Pipeline - Qualidade de Código
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # 1️⃣ Validação de Dependências
+  dependencies:
+    name: 📦 Dependências & Setup
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: ✅ Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.17'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 📥 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+          
+      - name: 🔗 Instalar dependências
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🔐 Validar variáveis de ambiente
+        run: pnpm run validate-env
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+
+  # 2️⃣ Linting & Formatação
+  lint:
+    name: 🎨 Lint & Formatação
+    runs-on: ubuntu-latest
+    needs: dependencies
+    
+    steps:
+      - name: ✅ Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.17'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 📥 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+          
+      - name: 🔗 Instalar dependências
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🎨 Rodar ESLint
+        run: pnpm lint
+        continue-on-error: false
+        
+      - name: 📝 Comment no PR (se houver erros)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ **ESLint falhou!** Favor corrigir os erros de linting antes de fazer merge.'
+            })
+
+  # 3️⃣ Type Checking
+  type-check:
+    name: 🔍 Type Checking
+    runs-on: ubuntu-latest
+    needs: dependencies
+    
+    steps:
+      - name: ✅ Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.17'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 📥 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+          
+      - name: 🔗 Instalar dependências
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🔍 Verificar tipos TypeScript
+        run: pnpm type-check
+        
+      - name: 📝 Comment no PR (se houver erros)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ **Type checking falhou!** Favor corrigir os erros de tipo TypeScript.'
+            })
+
+  # 4️⃣ Build Validation
+  build:
+    name: 🏗️ Build & Validação
+    runs-on: ubuntu-latest
+    needs: [lint, type-check]
+    
+    steps:
+      - name: ✅ Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.17'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 📥 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+          
+      - name: 🔗 Instalar dependências
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🏗️ Build do projeto
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          
+      - name: 💾 Cache Next.js build
+        uses: actions/cache@v3
+        with:
+          path: .next
+          key: ${{ runner.os }}-next-${{ hashFiles('pnpm-lock.yaml') }}
+          
+      - name: 📝 Comment no PR (se houver erros)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ **Build falhou!** Favor revisar os erros e tentar novamente.'
+            })
+
+  # 5️⃣ Security Check
+  security:
+    name: 🔒 Verificação de Segurança
+    runs-on: ubuntu-latest
+    needs: dependencies
+    
+    steps:
+      - name: ✅ Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.17'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 📥 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+          
+      - name: 🔗 Instalar dependências
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🔒 Verificar vulnerabilidades npm
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+        
+      - name: 🔐 Verificar secrets expostos
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --only-verified
+
+  # 6️⃣ Code Quality Summary
+  quality-summary:
+    name: ✅ Resumo de Qualidade
+    runs-on: ubuntu-latest
+    needs: [dependencies, lint, type-check, build, security]
+    if: always()
+    
+    steps:
+      - name: ✅ Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 🎯 Status de todos os jobs
+        run: |
+          echo "## 📊 Resumo da Esteira CI/CD" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Verificação | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 Dependências | ${{ needs.dependencies.result == 'success' && '✅ Passou' || '❌ Falhou' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎨 Lint & Formatação | ${{ needs.lint.result == 'success' && '✅ Passou' || '❌ Falhou' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔍 Type Checking | ${{ needs.type-check.result == 'success' && '✅ Passou' || '❌ Falhou' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🏗️ Build | ${{ needs.build.result == 'success' && '✅ Passou' || '❌ Falhou' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔒 Segurança | ${{ needs.security.result == 'success' && '✅ Passou' || '⚠️ Verificado' }} |" >> $GITHUB_STEP_SUMMARY
+          
+      - name: ❌ Falhar se algum job falhou
+        if: |
+          needs.dependencies.result == 'failure' ||
+          needs.lint.result == 'failure' ||
+          needs.type-check.result == 'failure' ||
+          needs.build.result == 'failure'
+        run: exit 1
+        
+      - name: ✅ Comentar sucesso no PR
+        if: success() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ **Todos os requisitos de qualidade foram atendidos!** Pronto para merge.'
+            })
