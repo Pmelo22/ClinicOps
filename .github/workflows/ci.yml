@@ -30,16 +30,8 @@ jobs:
         with:
           node-version: '18.17'
           
-      - name: 💾 Cache pnpm
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-          
       - name: 🔗 Instalar dependências
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
         
       - name: 🔐 Validar variáveis de ambiente
         run: pnpm run validate-env
@@ -69,16 +61,8 @@ jobs:
         with:
           node-version: '18.17'
           
-      - name: 💾 Restore pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-          
       - name: 🔗 Instalar dependências
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
         
       - name: 🎨 Rodar ESLint
         run: pnpm lint
@@ -116,16 +100,8 @@ jobs:
         with:
           node-version: '18.17'
           
-      - name: 💾 Restore pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-          
       - name: 🔗 Instalar dependências
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
         
       - name: 🔍 Verificar tipos TypeScript
         run: pnpm type-check
@@ -162,30 +138,14 @@ jobs:
         with:
           node-version: '18.17'
           
-      - name: 💾 Restore pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-          
       - name: 🔗 Instalar dependências
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
         
       - name: 🏗️ Build do projeto
         run: pnpm build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          
-      - name: 💾 Cache Next.js build
-        uses: actions/cache@v3
-        with:
-          path: .next
-          key: ${{ runner.os }}-next-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-next-
           
       - name: 📝 Comment no PR (se houver erros)
         if: failure() && github.event_name == 'pull_request'
@@ -219,16 +179,8 @@ jobs:
         with:
           node-version: '18.17'
           
-      - name: 💾 Restore pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-          
       - name: 🔗 Instalar dependências
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
         
       - name: 🔒 Verificar vulnerabilidades npm
         run: npm audit --audit-level=moderate
