@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { type Viewport } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardHeader } from '@/components/dashboard/header'
 import { StatsCard } from '@/components/dashboard/stats-card'
@@ -7,6 +8,11 @@ import { Users, Calendar, FileText, TrendingUp } from 'lucide-react'
 
 export const metadata = {
   title: 'Dashboard - ClinicOps',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default async function DashboardPage() {

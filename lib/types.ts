@@ -1,6 +1,6 @@
 // Database types for ClinicOps
 
-export type UserRole = 'master' | 'admin_tenant' | 'operacional'
+export type UserRole = 'master' | 'admin' | 'operacional'
 export type SubscriptionStatus = 'ativo' | 'inativo' | 'trial' | 'cancelado'
 export type DocumentType = 'prontuario' | 'exame' | 'receita' | 'atestado' | 'outros'
 
@@ -37,7 +37,6 @@ export interface Clinic {
 
 export interface User {
   id: string
-  auth_user_id: string
   clinica_id: string | null
   nome: string
   email: string

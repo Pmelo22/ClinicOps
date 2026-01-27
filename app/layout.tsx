@@ -8,6 +8,13 @@ import './globals.css'
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+}
+
 export const metadata: Metadata = {
   title: 'ClinicOps - Gestao Inteligente para Clinicas Medicas',
   description: 'Plataforma SaaS completa para gestao de clinicas medicas. Gerencie pacientes, atendimentos, documentos e muito mais com seguranca e conformidade LGPD.',
@@ -15,12 +22,6 @@ export const metadata: Metadata = {
   applicationName: 'ClinicOps',
   authors: [{ name: 'ClinicOps Team' }],
   keywords: ['clinica', 'medica', 'saas', 'gestao', 'pacientes', 'atendimentos'],
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
   icons: {
     icon: [
       {
@@ -53,8 +54,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={`${geist.className} ${geistMono.className} font-sans antialiased`}>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={`${geist.className} ${geistMono.className} font-sans antialiased`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
           <Analytics />

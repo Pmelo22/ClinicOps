@@ -1,16 +1,22 @@
 'use client'
 
-import React from "react"
-
+import React from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Activity, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -18,46 +24,35 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const { signIn } = useAuth()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
 
-    const supabase = createClient()
+    try {
+      await signIn(email, password)
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+      // A função signIn já dispara o redirecionamento
+      // mas podemos adicionar um delay para garantir
+      setTimeout(() => {
+        router.refresh()
+      }, 500)
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Erro ao fazer login'
 
-    if (signInError) {
-      setError(signInError.message === 'Invalid login credentials'
-        ? 'Email ou senha incorretos.'
-        : signInError.message)
-      setIsLoading(false)
-      return
-    }
-
-    // Get user profile to determine redirect
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (user) {
-      const { data: usuario } = await supabase
-        .from('usuarios')
-        .select('perfil')
-        .eq('auth_user_id', user.id)
-        .single()
-
-      // Redirect based on user role
-      if (usuario?.perfil === 'master') {
-        router.push('/dashboard/master')
-      } else if (usuario?.perfil === 'admin_tenant') {
-        router.push('/dashboard/admin')
+      // Mensagens amigáveis
+      if (message.includes('Invalid login credentials')) {
+        setError('Email ou senha incorretos.')
+      } else if (message.includes('Email not confirmed')) {
+        setError('Email não confirmado. Verifique seu email.')
       } else {
-        router.push('/dashboard')
+        setError(message)
       }
-      router.refresh()
+    } finally {
+      setIsLoading(false)
     }
   }
 

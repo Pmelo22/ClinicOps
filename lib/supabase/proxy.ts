@@ -47,32 +47,113 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Redirect unauthenticated users to login
+  // Rotas públicas que não requerem autenticação
   const publicRoutes = [
     '/auth/login',
     '/auth/cadastro',
     '/auth/esqueci-senha',
+    '/auth/reset-password',
     '/auth/callback',
     '/auth/error',
     '/auth/cadastro-sucesso',
+    '/auth/completar-cadastro',
     '/pricing',
     '/',
   ]
 
-  const isPublicRoute = publicRoutes.some((route) =>
-    request.nextUrl.pathname.startsWith(route),
-  )
+  const pathname = request.nextUrl.pathname
+  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route))
 
+  // Redirecionar usuários não autenticados
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
     return NextResponse.redirect(url)
   }
 
-  if (user && request.nextUrl.pathname === '/auth/login') {
+  // Redirecionar usuários autenticados para dashboard (apenas de /auth/login)
+  if (user && pathname === '/auth/login') {
+    // Verificar se o usuário já tem perfil
+    const { data: userProfile } = await supabase
+      .from('usuarios')
+      .select('clinica_id')
+      .eq('auth_user_id', user.id)
+      .single()
+
+    // Se não tem perfil ou clínica, redirecionar para completar cadastro
+    if (!userProfile || !userProfile.clinica_id) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/auth/cadastro'
+      url.searchParams.set('step', 'choose-type')
+      return NextResponse.redirect(url)
+    }
+
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
+  }
+
+  // Para usuários autenticados acessando dashboard sem perfil completo
+  if (user && pathname.startsWith('/dashboard')) {
+    const { data: userProfile } = await supabase
+      .from('usuarios')
+      .select('clinica_id')
+      .eq('auth_user_id', user.id)
+      .single()
+
+    // Se não tem perfil ou clínica, redirecionar para completar cadastro
+    if (!userProfile || !userProfile.clinica_id) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/auth/cadastro'
+      url.searchParams.set('step', 'choose-type')
+      return NextResponse.redirect(url)
+    }
+  }
+
+  // Validar permissões para rotas protegidas específicas (não para /dashboard genérico)
+  const dashboardMasterPattern = /^\/dashboard\/master(\/|$)/
+  const dashboardAdminPattern = /^\/dashboard\/admin(\/|$)/
+
+  if (user && dashboardMasterPattern.test(pathname)) {
+    try {
+      const { data: userProfile } = await supabase
+        .from('usuarios')
+        .select('perfil')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      const userRole = userProfile?.perfil
+      const allowedRoles = ['master']
+
+      if (userRole && !allowedRoles.includes(userRole)) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/dashboard'
+        return NextResponse.redirect(url)
+      }
+    } catch (error) {
+      console.error('Erro ao validar permissões master:', error)
+    }
+  }
+
+  if (user && dashboardAdminPattern.test(pathname)) {
+    try {
+      const { data: userProfile } = await supabase
+        .from('usuarios')
+        .select('perfil')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      const userRole = userProfile?.perfil
+      const allowedRoles = ['admin', 'master']
+
+      if (userRole && !allowedRoles.includes(userRole)) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/dashboard'
+        return NextResponse.redirect(url)
+      }
+    } catch (error) {
+      console.error('Erro ao validar permissões admin:', error)
+    }
   }
 
   /**

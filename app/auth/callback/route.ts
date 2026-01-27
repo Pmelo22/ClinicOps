@@ -14,18 +14,33 @@ export async function GET(request: Request) {
       const { data: { user } } = await supabase.auth.getUser()
 
       if (user) {
+        // Verificar se o usuário já tem um perfil na tabela usuarios
         const { data: usuario } = await supabase
           .from('usuarios')
-          .select('perfil')
-          .eq('auth_user_id', user.id)
+          .select('perfil, clinica_id')
+          .eq('id', user.id)
           .single()
+
+        // Se o usuário NÃO tem perfil, significa que precisa completar o cadastro
+        // Redirecionar para a página de escolher tipo (funcionário ou dono)
+        if (!usuario) {
+          // Salvar o email verificado (OAuth já verifica email automaticamente)
+          return NextResponse.redirect(`${origin}/auth/cadastro?step=choose-type&oauth=true`)
+        }
+
+        // Se o usuário não tem clínica associada, precisa escolher o tipo
+        if (!usuario.clinica_id) {
+          return NextResponse.redirect(`${origin}/auth/cadastro?step=choose-type`)
+        }
 
         // Redirect based on user role
         if (usuario?.perfil === 'master') {
           return NextResponse.redirect(`${origin}/dashboard/master`)
-        } else if (usuario?.perfil === 'admin_tenant') {
+        } else if (usuario?.perfil === 'admin') {
           return NextResponse.redirect(`${origin}/dashboard/admin`)
         }
+
+        return NextResponse.redirect(`${origin}/dashboard`)
       }
 
       return NextResponse.redirect(`${origin}${next}`)
