@@ -4,6 +4,21 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
+// Rate limiting constants
+const RATE_LIMIT_DELAY = 1000 // 1 segundo entre requisições
+const MAX_RETRIES = 3
+const RETRY_DELAY = 5000 // 5 segundos entre tentativas
+
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+function isRateLimitError(error: any): boolean {
+  if (!error) return false
+  const message = error.message?.toLowerCase() || ''
+  return message.includes('rate') || message.includes('too many') || error.status === 429
+}
+
 export async function login(formData: FormData) {
   const supabase = await createClient()
 
@@ -26,7 +41,7 @@ export async function login(formData: FormData) {
     const { data: usuario } = await supabase
       .from('usuarios')
       .select('perfil')
-      .eq('auth_user_id', user.id)
+      .eq('id', user.id)
       .single()
 
     revalidatePath('/', 'layout')
@@ -34,7 +49,7 @@ export async function login(formData: FormData) {
     // Redirect based on user role
     if (usuario?.perfil === 'master') {
       redirect('/dashboard/master')
-    } else if (usuario?.perfil === 'admin_tenant') {
+    } else if (usuario?.perfil === 'admin') {
       redirect('/dashboard/admin')
     } else {
       redirect('/dashboard')
@@ -65,86 +80,160 @@ export async function signup(formData: FormData) {
     return { error: 'Este email ja esta cadastrado.' }
   }
 
-  // Get the plan
-  const { data: plano } = await supabase
-    .from('planos')
-    .select('id')
-    .eq('nome', planoId.charAt(0).toUpperCase() + planoId.slice(1))
-    .single()
+  // Retry logic para signup
+  let lastError: any = null
 
-  if (!plano) {
-    return { error: 'Plano nao encontrado.' }
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[SignUp] Tentativa ${attempt}/${MAX_RETRIES} para ${email}`)
+
+      // Get the plan
+      const { data: plano, error: planoError } = await supabase
+        .from('planos')
+        .select('id')
+        .eq('nome', planoId.charAt(0).toUpperCase() + planoId.slice(1))
+        .single()
+
+      if (planoError) {
+        return { error: 'Plano nao encontrado.' }
+      }
+
+      if (!plano) {
+        return { error: 'Plano nao encontrado.' }
+      }
+
+      await sleep(RATE_LIMIT_DELAY)
+
+      // Create auth user with retry
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
+            `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+          data: {
+            nome,
+            perfil: 'admin',
+          },
+        },
+      })
+
+      if (authError) {
+        lastError = authError
+        
+        if (isRateLimitError(authError)) {
+          console.warn(`[SignUp] Rate limited no auth. Aguardando ${RETRY_DELAY}ms...`)
+          if (attempt < MAX_RETRIES) {
+            await sleep(RETRY_DELAY)
+            continue
+          }
+        }
+        
+        return { error: authError.message }
+      }
+
+      if (!authData.user) {
+        return { error: 'Erro ao criar usuario.' }
+      }
+
+      await sleep(RATE_LIMIT_DELAY)
+
+      // Create clinic
+      const { data: clinica, error: clinicaError } = await supabase
+        .from('clinicas')
+        .insert({
+          nome: nomeClinica,
+          cnpj,
+          email,
+          plano_id: plano.id,
+          status: 'trial',
+          data_inicio_assinatura: new Date().toISOString(),
+          data_fim_trial: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+        })
+        .select()
+        .single()
+
+      if (clinicaError) {
+        lastError = clinicaError
+        
+        if (isRateLimitError(clinicaError)) {
+          console.warn(`[SignUp] Rate limited ao criar clínica. Aguardando ${RETRY_DELAY}ms...`)
+          if (attempt < MAX_RETRIES) {
+            await sleep(RETRY_DELAY)
+            continue
+          }
+        }
+        
+        return { error: 'Erro ao criar clinica: ' + clinicaError.message }
+      }
+
+      await sleep(RATE_LIMIT_DELAY)
+
+      // Create user profile
+      const { error: usuarioError } = await supabase
+        .from('usuarios')
+        .insert({
+          id: authData.user.id,
+          clinica_id: clinica.id,
+          nome,
+          email,
+          perfil: 'admin',
+          ativo: true,
+        })
+
+      if (usuarioError) {
+        lastError = usuarioError
+        
+        if (isRateLimitError(usuarioError)) {
+          console.warn(`[SignUp] Rate limited ao criar usuário. Aguardando ${RETRY_DELAY}ms...`)
+          if (attempt < MAX_RETRIES) {
+            await sleep(RETRY_DELAY)
+            continue
+          }
+        }
+        
+        return { error: 'Erro ao criar perfil: ' + usuarioError.message }
+      }
+
+      await sleep(RATE_LIMIT_DELAY)
+
+      // Initialize resource usage
+      const { error: recursoError } = await supabase
+        .from('uso_recursos')
+        .insert({
+          clinica_id: clinica.id,
+          mes_referencia: new Date().toISOString().slice(0, 7) + '-01',
+          total_usuarios: 1,
+          total_pacientes: 0,
+          armazenamento_usado_mb: 0,
+          total_atendimentos: 0,
+        })
+
+      if (recursoError) {
+        console.warn('[SignUp] Erro ao inicializar recursos (não crítico):', recursoError)
+      }
+
+      console.log('[SignUp] Cadastro concluído com sucesso!')
+      revalidatePath('/', 'layout')
+      redirect('/auth/cadastro-sucesso')
+
+    } catch (error: any) {
+      lastError = error
+      console.error(`[SignUp] Erro na tentativa ${attempt}:`, error)
+      
+      if (!isRateLimitError(error) && attempt === 1) {
+        return { error: error.message || 'Erro ao criar conta.' }
+      }
+      
+      if (attempt < MAX_RETRIES && isRateLimitError(error)) {
+        console.log(`[SignUp] Tentando novamente após rate limit...`)
+        await sleep(RETRY_DELAY)
+        continue
+      }
+    }
   }
 
-  // Create auth user
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
-        `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
-      data: {
-        nome,
-        perfil: 'admin_tenant',
-      },
-    },
-  })
-
-  if (authError) {
-    return { error: authError.message }
-  }
-
-  if (!authData.user) {
-    return { error: 'Erro ao criar usuario.' }
-  }
-
-  // Create clinic
-  const { data: clinica, error: clinicaError } = await supabase
-    .from('clinicas')
-    .insert({
-      nome: nomeClinica,
-      cnpj,
-      email,
-      plano_id: plano.id,
-      status_assinatura: 'trial',
-      data_fim_trial: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-    })
-    .select()
-    .single()
-
-  if (clinicaError) {
-    return { error: 'Erro ao criar clinica: ' + clinicaError.message }
-  }
-
-  // Create user profile
-  const { error: usuarioError } = await supabase
-    .from('usuarios')
-    .insert({
-      auth_user_id: authData.user.id,
-      clinica_id: clinica.id,
-      nome,
-      email,
-      perfil: 'admin_tenant',
-      ativo: true,
-    })
-
-  if (usuarioError) {
-    return { error: 'Erro ao criar perfil: ' + usuarioError.message }
-  }
-
-  // Initialize resource usage
-  await supabase
-    .from('uso_recursos')
-    .insert({
-      clinica_id: clinica.id,
-      mes_referencia: new Date().toISOString().slice(0, 7) + '-01',
-      total_usuarios: 1,
-      total_pacientes: 0,
-      armazenamento_usado_mb: 0,
-      total_atendimentos: 0,
-    })
-
-  redirect('/auth/cadastro-sucesso')
+  return { error: 'Falha ao criar conta. Por favor, aguarde alguns minutos e tente novamente.' }
 }
 
 export async function signOut() {
