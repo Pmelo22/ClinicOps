@@ -18,7 +18,7 @@ import { useState } from 'react'
 interface Column<T> {
   key: keyof T | string
   header: string
-  render?: (item: T) => React.ReactNode
+  render?: (_item: T) => React.ReactNode
 }
 
 interface DataTableProps<T> {
@@ -27,7 +27,7 @@ interface DataTableProps<T> {
   searchKey?: keyof T
   searchPlaceholder?: string
   pageSize?: number
-  onRowClick?: (item: T) => void
+  onRowClick?: (_item: T) => void
 }
 
 export function DataTable<T extends Record<string, unknown>>({

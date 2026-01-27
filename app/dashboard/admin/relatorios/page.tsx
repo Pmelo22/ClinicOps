@@ -10,9 +10,9 @@ export const metadata = {
 
 export default async function AdminRelatoriosPage() {
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/auth/login')
   }
@@ -57,14 +57,14 @@ export default async function AdminRelatoriosPage() {
   ])
 
   const faturamentoMes = atendimentosComValor?.reduce((sum, a) => sum + (a.valor || 0), 0) || 0
-  const crescimentoAtendimentos = atendimentosMesAnterior 
+  const crescimentoAtendimentos = atendimentosMesAnterior
     ? Math.round(((atendimentosMes || 0) - atendimentosMesAnterior) / atendimentosMesAnterior * 100)
     : 0
 
   return (
     <div>
       <DashboardHeader title="Relatorios" userName={usuario.nome} />
-      
+
       <div className="p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
@@ -123,7 +123,7 @@ export default async function AdminRelatoriosPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-foreground">
-                R$ {atendimentosMes 
+                R$ {atendimentosMes
                   ? (faturamentoMes / atendimentosMes).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
                   : '0,00'}
               </div>
@@ -149,7 +149,7 @@ export default async function AdminRelatoriosPage() {
                   </div>
                   <span className="font-semibold text-foreground">{pacientesMes || 0}</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-4 rounded-lg bg-muted">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-5 w-5 text-primary" />
@@ -157,7 +157,7 @@ export default async function AdminRelatoriosPage() {
                   </div>
                   <span className="font-semibold text-foreground">{atendimentosMes || 0}</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-4 rounded-lg bg-muted">
                   <div className="flex items-center gap-3">
                     <DollarSign className="h-5 w-5 text-primary" />

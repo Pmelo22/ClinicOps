@@ -19,9 +19,9 @@ export const metadata = {
 
 export default async function AdminUsuariosPage() {
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/auth/login')
   }
@@ -60,7 +60,7 @@ export default async function AdminUsuariosPage() {
   return (
     <div>
       <DashboardHeader title="Gerenciar Usuarios" userName={usuario.nome} />
-      
+
       <div className="p-6 space-y-6">
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-start">
           <div>
@@ -116,7 +116,7 @@ export default async function AdminUsuariosPage() {
                           </Badge>
                         </td>
                         <td className="py-3 px-4 text-muted-foreground">
-                          {u.ultimo_acesso 
+                          {u.ultimo_acesso
                             ? new Date(u.ultimo_acesso).toLocaleDateString('pt-BR')
                             : 'Nunca acessou'}
                         </td>

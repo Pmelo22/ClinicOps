@@ -190,7 +190,7 @@ export default function CadastroPage() {
                 {error}
               </div>
             )}
-            
+
             <div className="space-y-2">
               <Label htmlFor="nome">Seu nome completo</Label>
               <Input
@@ -273,8 +273,8 @@ export default function CadastroPage() {
 
             <div className="space-y-2">
               <Label htmlFor="plano">Plano</Label>
-              <Select 
-                value={formData.planoId} 
+              <Select
+                value={formData.planoId}
                 onValueChange={(value) => handleChange('planoId', value)}
                 disabled={isLoading}
               >

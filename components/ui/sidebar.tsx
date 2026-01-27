@@ -35,9 +35,9 @@ const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 type SidebarContextProps = {
   state: 'expanded' | 'collapsed'
   open: boolean
-  setOpen: (open: boolean) => void
+  setOpen: (_open: boolean) => void
   openMobile: boolean
-  setOpenMobile: (open: boolean) => void
+  setOpenMobile: (_open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
 }
@@ -64,7 +64,7 @@ function SidebarProvider({
 }: React.ComponentProps<'div'> & {
   defaultOpen?: boolean
   open?: boolean
-  onOpenChange?: (open: boolean) => void
+  onOpenChange?: (_open: boolean) => void
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
@@ -74,7 +74,7 @@ function SidebarProvider({
   const [_open, _setOpen] = React.useState(defaultOpen)
   const open = openProp ?? _open
   const setOpen = React.useCallback(
-    (value: boolean | ((value: boolean) => boolean)) => {
+    (value: boolean | ((_value: boolean) => boolean)) => {
       const openState = typeof value === 'function' ? value(open) : value
       if (setOpenProp) {
         setOpenProp(openState)
@@ -90,7 +90,7 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
+    return isMobile ? setOpenMobile((_open) => !_open) : setOpen((_open) => !_open)
   }, [isMobile, setOpen, setOpenMobile])
 
   // Adds a keyboard shortcut to toggle the sidebar.

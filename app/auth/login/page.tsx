@@ -32,8 +32,8 @@ export default function LoginPage() {
     })
 
     if (signInError) {
-      setError(signInError.message === 'Invalid login credentials' 
-        ? 'Email ou senha incorretos.' 
+      setError(signInError.message === 'Invalid login credentials'
+        ? 'Email ou senha incorretos.'
         : signInError.message)
       setIsLoading(false)
       return
@@ -41,7 +41,7 @@ export default function LoginPage() {
 
     // Get user profile to determine redirect
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     if (user) {
       const { data: usuario } = await supabase
         .from('usuarios')
@@ -96,8 +96,8 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Senha</Label>
-                <Link 
-                  href="/auth/esqueci-senha" 
+                <Link
+                  href="/auth/esqueci-senha"
                   className="text-sm text-primary hover:underline"
                 >
                   Esqueceu a senha?

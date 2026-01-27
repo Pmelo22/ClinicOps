@@ -45,8 +45,8 @@ export function Benefits() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {benefits.map((benefit) => (
-            <div 
-              key={benefit.title} 
+            <div
+              key={benefit.title}
               className="p-8 rounded-2xl bg-card border border-border"
             >
               <h3 className="text-xl font-semibold text-foreground mb-6">

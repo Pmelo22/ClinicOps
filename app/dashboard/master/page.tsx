@@ -12,9 +12,9 @@ export const metadata = {
 
 export default async function MasterDashboardPage() {
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/auth/login')
   }
@@ -58,7 +58,7 @@ export default async function MasterDashboardPage() {
   return (
     <div>
       <DashboardHeader title="Painel Master" userName={usuario.nome} />
-      
+
       <div className="p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatsCard
@@ -109,14 +109,14 @@ export default async function MasterDashboardPage() {
                       </div>
                       <div className="text-right">
                         <span className={`text-xs px-2 py-1 rounded-full ${
-                          clinica.status_assinatura === 'ativo' 
-                            ? 'bg-accent/10 text-accent' 
+                          clinica.status_assinatura === 'ativo'
+                            ? 'bg-accent/10 text-accent'
                             : clinica.status_assinatura === 'trial'
                             ? 'bg-amber-500/10 text-amber-600'
                             : 'bg-muted text-muted-foreground'
                         }`}>
-                          {clinica.status_assinatura === 'trial' ? 'Trial' : 
-                           clinica.status_assinatura === 'ativo' ? 'Ativo' : 
+                          {clinica.status_assinatura === 'trial' ? 'Trial' :
+                           clinica.status_assinatura === 'ativo' ? 'Ativo' :
                            clinica.status_assinatura}
                         </span>
                         <p className="text-xs text-muted-foreground mt-1">

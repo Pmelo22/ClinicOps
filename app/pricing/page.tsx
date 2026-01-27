@@ -22,18 +22,18 @@ export default function PricingPage() {
               Planos simples e transparentes
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Escolha o plano ideal para o tamanho da sua clinica. 
+              Escolha o plano ideal para o tamanho da sua clinica.
               Todos os planos incluem 14 dias de teste gratuito.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {PRODUCTS.map((product) => (
-              <Card 
-                key={product.id} 
+              <Card
+                key={product.id}
                 className={`relative flex flex-col ${
-                  product.highlighted 
-                    ? 'border-primary shadow-lg scale-105' 
+                  product.highlighted
+                    ? 'border-primary shadow-lg scale-105'
                     : 'border-border'
                 }`}
               >
@@ -67,8 +67,8 @@ export default function PricingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full"
                     variant={product.highlighted ? 'default' : 'outline'}
                     asChild
                   >
@@ -109,7 +109,7 @@ export default function PricingPage() {
               Precisa de algo personalizado?
             </h2>
             <p className="text-muted-foreground mb-6">
-              Para redes de clinicas ou necessidades especificas, entre em contato 
+              Para redes de clinicas ou necessidades especificas, entre em contato
               para um plano sob medida.
             </p>
             <Button variant="outline" asChild>

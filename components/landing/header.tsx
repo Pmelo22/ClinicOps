@@ -51,22 +51,22 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-4">
-              <Link 
-                href="#recursos" 
+              <Link
+                href="#recursos"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Recursos
               </Link>
-              <Link 
-                href="#beneficios" 
+              <Link
+                href="#beneficios"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Beneficios
               </Link>
-              <Link 
-                href="/pricing" 
+              <Link
+                href="/pricing"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >

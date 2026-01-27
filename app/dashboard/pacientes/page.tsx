@@ -25,9 +25,9 @@ export default async function PacientesPage({
 }) {
   const params = await searchParams
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/auth/login')
   }
@@ -57,7 +57,7 @@ export default async function PacientesPage({
   return (
     <div>
       <DashboardHeader title="Pacientes" userName={usuario.nome} />
-      
+
       <div className="p-6 space-y-6">
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
           <form className="relative max-w-sm flex-1">

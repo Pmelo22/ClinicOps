@@ -12,9 +12,9 @@ export const metadata = {
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/auth/login')
   }
@@ -61,14 +61,14 @@ export default async function AdminDashboardPage() {
 
   // Check trial status
   const isTrialEnding = clinica?.status_assinatura === 'trial' && clinica?.data_fim_trial
-  const trialDaysLeft = isTrialEnding 
+  const trialDaysLeft = isTrialEnding
     ? Math.max(0, Math.ceil((new Date(clinica.data_fim_trial).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0
 
   return (
     <div>
       <DashboardHeader title="Painel Administrativo" userName={usuario.nome} />
-      
+
       <div className="p-6 space-y-6">
         {isTrialEnding && trialDaysLeft <= 7 && (
           <Card className="border-amber-500/50 bg-amber-500/10">
@@ -77,7 +77,7 @@ export default async function AdminDashboardPage() {
                 <AlertCircle className="h-5 w-5 text-amber-600" />
                 <div>
                   <p className="font-medium text-amber-800">
-                    {trialDaysLeft === 0 
+                    {trialDaysLeft === 0
                       ? 'Seu periodo de teste termina hoje!'
                       : `Seu periodo de teste termina em ${trialDaysLeft} dia${trialDaysLeft > 1 ? 's' : ''}`
                     }
@@ -135,7 +135,7 @@ export default async function AdminDashboardPage() {
                 </div>
                 <Progress value={percentUsuarios} className="h-2" />
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Pacientes</span>
@@ -143,7 +143,7 @@ export default async function AdminDashboardPage() {
                 </div>
                 <Progress value={percentPacientes} className="h-2" />
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Armazenamento</span>
@@ -177,14 +177,14 @@ export default async function AdminDashboardPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Status da Assinatura</p>
                 <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                  clinica?.status_assinatura === 'ativo' 
+                  clinica?.status_assinatura === 'ativo'
                     ? 'bg-accent/10 text-accent'
                     : clinica?.status_assinatura === 'trial'
                     ? 'bg-amber-500/10 text-amber-600'
                     : 'bg-destructive/10 text-destructive'
                 }`}>
-                  {clinica?.status_assinatura === 'trial' ? 'Periodo de Teste' : 
-                   clinica?.status_assinatura === 'ativo' ? 'Ativo' : 
+                  {clinica?.status_assinatura === 'trial' ? 'Periodo de Teste' :
+                   clinica?.status_assinatura === 'ativo' ? 'Ativo' :
                    clinica?.status_assinatura || 'N/A'}
                 </span>
               </div>

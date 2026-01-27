@@ -21,7 +21,7 @@ export async function login(formData: FormData) {
 
   // Get user profile to determine redirect
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (user) {
     const { data: usuario } = await supabase
       .from('usuarios')
@@ -30,7 +30,7 @@ export async function login(formData: FormData) {
       .single()
 
     revalidatePath('/', 'layout')
-    
+
     // Redirect based on user role
     if (usuario?.perfil === 'master') {
       redirect('/dashboard/master')
@@ -163,7 +163,7 @@ export async function getSession() {
 export async function getCurrentUser() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) return null
 
   const { data: usuario } = await supabase

@@ -113,7 +113,7 @@ export default function NovoPacientePage() {
   return (
     <div>
       <DashboardHeader title="Novo Paciente" userName="" />
-      
+
       <div className="p-6">
         <Button variant="ghost" asChild className="mb-6">
           <Link href="/dashboard/pacientes">

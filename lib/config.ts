@@ -1,6 +1,6 @@
 /**
  * Project Configuration for ClinicOps
- * 
+ *
  * This file contains configuration constants and utilities
  * for the ClinicOps application.
  */

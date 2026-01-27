@@ -1,10 +1,10 @@
-import { 
-  Users, 
-  Calendar, 
-  FileText, 
-  BarChart3, 
-  Shield, 
-  Smartphone 
+import {
+  Users,
+  Calendar,
+  FileText,
+  BarChart3,
+  Shield,
+  Smartphone
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 

@@ -39,7 +39,7 @@ export default function NovoAtendimentoPage() {
     async function loadPacientes() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (user) {
         const { data: usuario } = await supabase
           .from('usuarios')
@@ -119,7 +119,7 @@ export default function NovoAtendimentoPage() {
   return (
     <div>
       <DashboardHeader title="Novo Atendimento" userName="" />
-      
+
       <div className="p-6">
         <Button variant="ghost" asChild className="mb-6">
           <Link href="/dashboard/atendimentos">

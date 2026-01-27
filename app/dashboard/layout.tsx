@@ -10,9 +10,9 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/auth/login')
   }
@@ -29,7 +29,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardSidebar 
+      <DashboardSidebar
         userRole={usuario.perfil as UserRole}
         userName={usuario.nome}
         clinicName={usuario.clinica?.nome}

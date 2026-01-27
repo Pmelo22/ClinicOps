@@ -11,9 +11,9 @@ export const metadata = {
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/auth/login')
   }
@@ -52,7 +52,7 @@ export default async function DashboardPage() {
   return (
     <div>
       <DashboardHeader title="Visao Geral" userName={usuario.nome} />
-      
+
       <div className="p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatsCard
@@ -106,8 +106,8 @@ export default async function DashboardPage() {
                           {new Date(appointment.data_atendimento).toLocaleDateString('pt-BR')}
                         </p>
                         <span className={`text-xs px-2 py-1 rounded-full ${
-                          appointment.status === 'concluido' 
-                            ? 'bg-accent/10 text-accent' 
+                          appointment.status === 'concluido'
+                            ? 'bg-accent/10 text-accent'
                             : appointment.status === 'agendado'
                             ? 'bg-primary/10 text-primary'
                             : 'bg-muted text-muted-foreground'

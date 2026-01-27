@@ -19,10 +19,10 @@ export function CTA() {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          <Button 
-            size="lg" 
-            variant="outline" 
-            asChild 
+          <Button
+            size="lg"
+            variant="outline"
+            asChild
             className="w-full sm:w-auto bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
           >
             <Link href="/pricing">Ver Planos</Link>

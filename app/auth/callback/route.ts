@@ -9,10 +9,10 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    
+
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (user) {
         const { data: usuario } = await supabase
           .from('usuarios')
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
           return NextResponse.redirect(`${origin}/dashboard/admin`)
         }
       }
-      
+
       return NextResponse.redirect(`${origin}${next}`)
     }
   }

@@ -12,9 +12,9 @@ export const metadata = {
 
 export default async function MasterPlanosPage() {
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/auth/login')
   }
@@ -53,7 +53,7 @@ export default async function MasterPlanosPage() {
   return (
     <div>
       <DashboardHeader title="Gerenciar Planos" userName={usuario.nome} />
-      
+
       <div className="p-6 space-y-6">
         <div className="flex justify-between items-center">
           <p className="text-muted-foreground">

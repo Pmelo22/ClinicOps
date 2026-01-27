@@ -59,7 +59,7 @@ export default function EsqueciSenhaPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Se existe uma conta com o email <strong>{email}</strong>, 
+              Se existe uma conta com o email <strong>{email}</strong>,
               voce recebera um link para redefinir sua senha.
             </p>
           </CardContent>

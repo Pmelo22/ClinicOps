@@ -106,7 +106,7 @@ export default function NovoUsuarioPage() {
   return (
     <div>
       <DashboardHeader title="Novo Usuario" userName="" />
-      
+
       <div className="p-6">
         <Button variant="ghost" asChild className="mb-6">
           <Link href="/dashboard/admin/usuarios">
@@ -190,7 +190,7 @@ export default function NovoUsuarioPage() {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    Operacional: acesso a pacientes e atendimentos. 
+                    Operacional: acesso a pacientes e atendimentos.
                     Administrador: acesso completo a clinica.
                   </p>
                 </div>
