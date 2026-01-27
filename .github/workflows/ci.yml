@@ -29,8 +29,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18.17'
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 💾 Cache pnpm
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
           
       - name: 🔗 Instalar dependências
         run: pnpm install --frozen-lockfile
@@ -62,8 +68,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18.17'
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 💾 Restore pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
           
       - name: 🔗 Instalar dependências
         run: pnpm install --frozen-lockfile
@@ -103,8 +115,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18.17'
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 💾 Restore pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
           
       - name: 🔗 Instalar dependências
         run: pnpm install --frozen-lockfile
@@ -143,8 +161,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18.17'
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 💾 Restore pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
           
       - name: 🔗 Instalar dependências
         run: pnpm install --frozen-lockfile
@@ -160,6 +184,8 @@ jobs:
         with:
           path: .next
           key: ${{ runner.os }}-next-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-next-
           
       - name: 📝 Comment no PR (se houver erros)
         if: failure() && github.event_name == 'pull_request'
@@ -192,8 +218,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18.17'
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
+          
+      - name: 💾 Restore pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
           
       - name: 🔗 Instalar dependências
         run: pnpm install --frozen-lockfile
