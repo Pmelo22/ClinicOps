@@ -53,7 +53,10 @@ export default async function MasterDashboardPage() {
     .select('plano:planos(preco_mensal)')
     .eq('status_assinatura', 'ativo')
 
-  const mrr = clinicasComPlano?.reduce((sum, c) => sum + (c.plano?.preco_mensal || 0), 0) || 0
+  const mrr = clinicasComPlano?.reduce((sum: number, c: any) => {
+    const precoMensal = Array.isArray(c.plano) ? c.plano[0]?.preco_mensal : c.plano?.preco_mensal
+    return sum + (precoMensal || 0)
+  }, 0) || 0
 
   return (
     <div>
