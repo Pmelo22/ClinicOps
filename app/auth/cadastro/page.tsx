@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { HeartPulse, ArrowRight, Eye, EyeOff, Check, Loader2 } from 'lucide-react'
 import { signup } from '@/app/actions/auth'
+import { OAuthButtons } from '@/components/auth/oauth-buttons'
 
 export default function CadastroPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -153,6 +154,19 @@ export default function CadastroPage() {
                 )}
               </Button>
             </form>
+
+            <div className="mt-6 space-y-4">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-card text-muted-foreground">Ou cadastre-se com</span>
+                </div>
+              </div>
+
+              <OAuthButtons />
+            </div>
 
             {/* Benefits */}
             <div className="mt-8 pt-6 border-t border-border/50">

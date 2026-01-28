@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardHeader } from '@/components/dashboard/header'
+import { DashboardCharts } from '@/components/dashboard/charts'
 import { StatsCard } from '@/components/dashboard/stats-card'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Users, Calendar, FileText, TrendingUp } from 'lucide-react'
@@ -31,23 +32,100 @@ export default async function DashboardPage() {
   // Get stats for the clinic
   const clinicaId = usuario.clinica_id
 
+  // Build all queries
+  const pacientesQuery = supabase
+    .from('pacientes')
+    .select('*', { count: 'exact', head: true })
+    .eq('clinica_id', clinicaId)
+
+  const atendimentosTotalQuery = supabase
+    .from('atendimentos')
+    .select('*', { count: 'exact', head: true })
+    .eq('clinica_id', clinicaId)
+
+  const atendimentosHojeQuery = supabase
+    .from('atendimentos')
+    .select('*', { count: 'exact', head: true })
+    .eq('clinica_id', clinicaId)
+    .gte('data_atendimento', new Date().toISOString().split('T')[0])
+
+  const recentAppointmentsQuery = supabase
+    .from('atendimentos')
+    .select('id, tipo, data_atendimento, status, paciente:pacientes(nome)')
+    .eq('clinica_id', clinicaId)
+    .order('data_atendimento', { ascending: false })
+    .limit(5)
+
+  const appointmentsByTypeQuery = supabase
+    .from('atendimentos')
+    .select('tipo')
+    .eq('clinica_id', clinicaId)
+    .gte('data_atendimento', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+
+  const revenueDataQuery = supabase
+    .from('atendimentos')
+    .select('data_atendimento, id')
+    .eq('clinica_id', clinicaId)
+    .gte('data_atendimento', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+
   const [
-    { count: totalPacientes },
-    { count: totalAtendimentos },
-    { count: atendimentosHoje },
-    { data: recentAppointments },
+    pacientesResult,
+    atendimentosTotalResult,
+    atendimentosHojeResult,
+    recentAppointmentsResult,
+    appointmentsByTypeResult,
+    revenueDataResult,
   ] = await Promise.all([
-    supabase.from('pacientes').select('*', { count: 'exact', head: true }).eq('clinica_id', clinicaId),
-    supabase.from('atendimentos').select('*', { count: 'exact', head: true }).eq('clinica_id', clinicaId),
-    supabase.from('atendimentos').select('*', { count: 'exact', head: true })
-      .eq('clinica_id', clinicaId)
-      .gte('data_atendimento', new Date().toISOString().split('T')[0]),
-    supabase.from('atendimentos')
-      .select('*, paciente:pacientes(nome)')
-      .eq('clinica_id', clinicaId)
-      .order('data_atendimento', { ascending: false })
-      .limit(5),
+    pacientesQuery,
+    atendimentosTotalQuery,
+    atendimentosHojeQuery,
+    recentAppointmentsQuery,
+    appointmentsByTypeQuery,
+    revenueDataQuery,
   ])
+
+  const totalPacientes = pacientesResult.count || 0
+  const totalAtendimentos = atendimentosTotalResult.count || 0
+  const atendimentosHoje = atendimentosHojeResult.count || 0
+  const recentAppointments = recentAppointmentsResult.data || []
+  const appointmentsByType = appointmentsByTypeResult.data || []
+  const revenueData = revenueDataResult.data || []
+
+  // Process appointments by type
+  const appointmentTypeMap = new Map<string, number>()
+  appointmentsByType?.forEach((apt: { tipo: string | null }) => {
+    const tipo = apt.tipo || 'Sem tipo'
+    appointmentTypeMap.set(tipo, (appointmentTypeMap.get(tipo) || 0) + 1)
+  })
+  const chartAppointmentData = Array.from(appointmentTypeMap).map(([tipo, quantidade]) => ({
+    tipo,
+    quantidade,
+  }))
+
+  // Process revenue data (simplified - count appointments per day)
+  const revenueMap = new Map<string, number>()
+  revenueData?.forEach((apt: { data_atendimento: string }) => {
+    const date = new Date(apt.data_atendimento)
+    const dia = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+    revenueMap.set(dia, (revenueMap.get(dia) || 0) + 1)
+  })
+  const chartRevenueData = Array.from(revenueMap)
+    .sort((a, b) => new Date(`2024-${a[0]}`).getTime() - new Date(`2024-${b[0]}`).getTime())
+    .map(([dia, quantidade]) => ({
+      dia,
+      valor: quantidade * 150, // Simplified: 150 per appointment
+    }))
+
+  console.log('DEBUG - Dashboard Data:', {
+    clinicaId,
+    totalPacientes,
+    totalAtendimentos,
+    atendimentosHoje,
+    appointmentsByTypeCount: appointmentsByType?.length,
+    revenueDataCount: revenueData?.length,
+    chartAppointmentData,
+    chartRevenueData,
+  })
 
   return (
     <div>
@@ -165,6 +243,12 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Gráficos */}
+        <DashboardCharts 
+          revenueData={chartRevenueData} 
+          appointmentData={chartAppointmentData}
+        />
       </div>
     </div>
   )
