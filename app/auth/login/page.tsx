@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { HeartPulse, Loader2, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { Loader2, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { login } from '@/app/actions/auth'
 import { OAuthButtons } from '@/components/auth/oauth-buttons'
 
@@ -36,10 +36,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md relative">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-            <HeartPulse className="h-6 w-6 text-primary" />
-          </div>
-          <span className="text-2xl font-bold text-foreground">ClinicOps</span>
+          <img src="/logo-new.svg" alt="ClinicOps" className="h-12" />
         </Link>
 
         <Card className="glass-card border-0 shadow-xl">
