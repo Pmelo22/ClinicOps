@@ -19,9 +19,9 @@ export const metadata = {
 
 export default async function AdminUsuariosPage() {
   const supabase = await createClient()
-
+  
   const { data: { user } } = await supabase.auth.getUser()
-
+  
   if (!user) {
     redirect('/auth/login')
   }
@@ -29,10 +29,10 @@ export default async function AdminUsuariosPage() {
   const { data: usuario } = await supabase
     .from('usuarios')
     .select('*, clinica:clinicas(*, plano:planos(*))')
-    .eq('auth_user_id', user.id)
+    .eq('id', user.id)
     .single()
 
-  if (!usuario || usuario.perfil !== 'admin_tenant') {
+  if (!usuario || usuario.perfil !== 'admin') {
     redirect('/dashboard')
   }
 
@@ -48,10 +48,10 @@ export default async function AdminUsuariosPage() {
 
   function getRoleBadge(perfil: string) {
     switch (perfil) {
-      case 'admin_tenant':
+      case 'admin':
         return <Badge className="bg-primary/10 text-primary border-primary/20">Administrador</Badge>
-      case 'operacional':
-        return <Badge variant="secondary">Operacional</Badge>
+      case 'operador':
+        return <Badge variant="secondary">Operador</Badge>
       default:
         return <Badge variant="outline">{perfil}</Badge>
     }
@@ -60,7 +60,7 @@ export default async function AdminUsuariosPage() {
   return (
     <div>
       <DashboardHeader title="Gerenciar Usuarios" userName={usuario.nome} />
-
+      
       <div className="p-6 space-y-6">
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-start">
           <div>
@@ -116,7 +116,7 @@ export default async function AdminUsuariosPage() {
                           </Badge>
                         </td>
                         <td className="py-3 px-4 text-muted-foreground">
-                          {u.ultimo_acesso
+                          {u.ultimo_acesso 
                             ? new Date(u.ultimo_acesso).toLocaleDateString('pt-BR')
                             : 'Nunca acessou'}
                         </td>

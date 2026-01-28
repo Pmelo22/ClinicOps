@@ -20,6 +20,7 @@ import {
   Shield,
   BarChart3,
   UserCog,
+  UserPlus,
 } from 'lucide-react'
 import { signOut } from '@/app/actions/auth'
 import type { UserRole } from '@/lib/types'
@@ -36,43 +37,49 @@ const navItems: NavItem[] = [
     href: '/dashboard',
     label: 'Visao Geral',
     icon: LayoutDashboard,
-    roles: ['operacional', 'admin_tenant', 'master'],
+    roles: ['operador', 'admin', 'master'],
   },
   {
     href: '/dashboard/pacientes',
     label: 'Pacientes',
     icon: Users,
-    roles: ['operacional', 'admin_tenant'],
+    roles: ['operador', 'admin'],
   },
   {
     href: '/dashboard/atendimentos',
     label: 'Atendimentos',
     icon: Calendar,
-    roles: ['operacional', 'admin_tenant'],
+    roles: ['operador', 'admin'],
   },
   {
     href: '/dashboard/documentos',
     label: 'Documentos',
     icon: FileText,
-    roles: ['operacional', 'admin_tenant'],
+    roles: ['operador', 'admin'],
   },
   {
     href: '/dashboard/admin/usuarios',
     label: 'Usuarios',
     icon: UserCog,
-    roles: ['admin_tenant'],
+    roles: ['admin'],
+  },
+  {
+    href: '/dashboard/admin/convites',
+    label: 'Convites',
+    icon: UserPlus,
+    roles: ['admin'],
   },
   {
     href: '/dashboard/admin/relatorios',
     label: 'Relatorios',
     icon: BarChart3,
-    roles: ['admin_tenant'],
+    roles: ['admin'],
   },
   {
     href: '/dashboard/admin/configuracoes',
     label: 'Configuracoes',
     icon: Settings,
-    roles: ['admin_tenant'],
+    roles: ['admin'],
   },
   {
     href: '/dashboard/master/clinicas',
@@ -116,9 +123,9 @@ export function DashboardSidebar({ userRole, userName, clinicName }: DashboardSi
         <ScrollArea className="flex-1 px-3 py-4">
           <nav className="space-y-1">
             {filteredNavItems.map((item) => {
-              const isActive = pathname === item.href ||
+              const isActive = pathname === item.href || 
                 (item.href !== '/dashboard' && pathname.startsWith(item.href))
-
+              
               return (
                 <Link
                   key={item.href}
@@ -147,9 +154,9 @@ export function DashboardSidebar({ userRole, userName, clinicName }: DashboardSi
             <p className="text-xs text-sidebar-primary capitalize">{userRole.replace('_', ' ')}</p>
           </div>
           <form action={signOut}>
-            <Button
-              type="submit"
-              variant="ghost"
+            <Button 
+              type="submit" 
+              variant="ghost" 
               className="w-full justify-start text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
             >
               <LogOut className="mr-2 h-4 w-4" />

@@ -25,9 +25,9 @@ export default async function MasterClinicasPage({
 }) {
   const params = await searchParams
   const supabase = await createClient()
-
+  
   const { data: { user } } = await supabase.auth.getUser()
-
+  
   if (!user) {
     redirect('/auth/login')
   }
@@ -35,7 +35,7 @@ export default async function MasterClinicasPage({
   const { data: usuario } = await supabase
     .from('usuarios')
     .select('*')
-    .eq('auth_user_id', user.id)
+    .eq('id', user.id)
     .single()
 
   if (!usuario || usuario.perfil !== 'master') {
@@ -52,7 +52,7 @@ export default async function MasterClinicasPage({
   }
 
   if (params.status) {
-    query = query.eq('status_assinatura', params.status)
+    query = query.eq('status', params.status)
   }
 
   const { data: clinicas } = await query
@@ -75,7 +75,7 @@ export default async function MasterClinicasPage({
   return (
     <div>
       <DashboardHeader title="Gerenciar Clinicas" userName={usuario.nome} />
-
+      
       <div className="p-6 space-y-6">
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
           <form className="relative max-w-sm flex-1">
@@ -144,7 +144,7 @@ export default async function MasterClinicasPage({
                           </div>
                         </td>
                         <td className="py-3 px-4">
-                          {getStatusBadge(clinica.status_assinatura)}
+                          {getStatusBadge(clinica.status)}
                         </td>
                         <td className="py-3 px-4 text-muted-foreground">
                           {new Date(clinica.created_at).toLocaleDateString('pt-BR')}
@@ -169,7 +169,7 @@ export default async function MasterClinicasPage({
                                   Editar
                                 </Link>
                               </DropdownMenuItem>
-                              {clinica.status_assinatura === 'ativo' ? (
+                              {clinica.status === 'ativo' ? (
                                 <DropdownMenuItem className="text-destructive">
                                   <Ban className="mr-2 h-4 w-4" />
                                   Suspender

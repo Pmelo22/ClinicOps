@@ -33,12 +33,12 @@ export default function CadastroSucessoPage() {
               <span className="font-medium">Verifique seu email</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Enviamos um link de confirmacao para o seu email.
+              Enviamos um link de confirmacao para o seu email. 
               Clique no link para ativar sua conta e comecar a usar o sistema.
             </p>
           </div>
           <p className="text-sm text-muted-foreground">
-            Seu periodo de teste gratuito de 14 dias comeca agora.
+            Seu periodo de teste gratuito de 14 dias comeca agora. 
             Aproveite todos os recursos da plataforma!
           </p>
         </CardContent>

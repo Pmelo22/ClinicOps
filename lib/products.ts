@@ -10,7 +10,7 @@ export interface Product {
   limiteArmazenamentoMb: number
 }
 
-export const PRODUCTS: Product[] = [
+export const PLANS: Product[] = [
   {
     id: 'basico',
     name: 'Basico',
@@ -67,3 +67,6 @@ export const PRODUCTS: Product[] = [
     limiteArmazenamentoMb: 20480,
   },
 ]
+
+// Alias for backward compatibility
+export const PRODUCTS = PLANS

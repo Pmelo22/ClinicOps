@@ -1,8 +1,9 @@
 // Database types for ClinicOps
 
-export type UserRole = 'master' | 'admin' | 'operacional'
+export type UserRole = 'master' | 'admin' | 'operador'
 export type SubscriptionStatus = 'ativo' | 'inativo' | 'trial' | 'cancelado'
 export type DocumentType = 'prontuario' | 'exame' | 'receita' | 'atestado' | 'outros'
+export type TipoAcaoAuditoria = 'criar' | 'atualizar' | 'excluir' | 'login' | 'logout' | 'visualizar'
 
 export interface Plan {
   id: string
@@ -24,9 +25,9 @@ export interface Clinic {
   cnpj: string
   email: string
   telefone: string | null
-  endereco: string | null
+  endereco: Record<string, string> | null
   plano_id: string
-  status_assinatura: SubscriptionStatus
+  status: SubscriptionStatus
   data_inicio_assinatura: string | null
   data_fim_trial: string | null
   stripe_customer_id: string | null

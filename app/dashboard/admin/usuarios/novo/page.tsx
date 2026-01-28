@@ -23,7 +23,7 @@ export default function NovoUsuarioPage() {
     nome: '',
     email: '',
     password: '',
-    perfil: 'operacional',
+    perfil: 'operador',
   })
 
   function handleChange(field: string, value: string) {
@@ -47,10 +47,10 @@ export default function NovoUsuarioPage() {
     const { data: adminUser } = await supabase
       .from('usuarios')
       .select('clinica_id, perfil')
-      .eq('auth_user_id', user.id)
+      .eq('id', user.id)
       .single()
 
-    if (!adminUser?.clinica_id || adminUser.perfil !== 'admin_tenant') {
+    if (!adminUser?.clinica_id || adminUser.perfil !== 'admin') {
       setError('Voce nao tem permissao para criar usuarios.')
       setIsLoading(false)
       return
@@ -85,7 +85,7 @@ export default function NovoUsuarioPage() {
     const { error: insertError } = await supabase
       .from('usuarios')
       .insert({
-        auth_user_id: authData.user.id,
+        id: authData.user.id,
         clinica_id: adminUser.clinica_id,
         nome: formData.nome,
         email: formData.email,
@@ -106,7 +106,7 @@ export default function NovoUsuarioPage() {
   return (
     <div>
       <DashboardHeader title="Novo Usuario" userName="" />
-
+      
       <div className="p-6">
         <Button variant="ghost" asChild className="mb-6">
           <Link href="/dashboard/admin/usuarios">
@@ -185,12 +185,12 @@ export default function NovoUsuarioPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="operacional">Operacional</SelectItem>
-                      <SelectItem value="admin_tenant">Administrador</SelectItem>
+                      <SelectItem value="operador">Operador</SelectItem>
+                      <SelectItem value="admin">Administrador</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    Operacional: acesso a pacientes e atendimentos.
+                    Operacional: acesso a pacientes e atendimentos. 
                     Administrador: acesso completo a clinica.
                   </p>
                 </div>

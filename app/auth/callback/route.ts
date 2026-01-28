@@ -9,40 +9,45 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-
+    
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser()
-
+      
       if (user) {
-        // Verificar se o usuário já tem um perfil na tabela usuarios
+        // Check if user already has a profile (completed onboarding)
         const { data: usuario } = await supabase
           .from('usuarios')
           .select('perfil, clinica_id')
           .eq('id', user.id)
           .single()
 
-        // Se o usuário NÃO tem perfil, significa que precisa completar o cadastro
-        // Redirecionar para a página de escolher tipo (funcionário ou dono)
-        if (!usuario) {
-          // Salvar o email verificado (OAuth já verifica email automaticamente)
-          return NextResponse.redirect(`${origin}/auth/cadastro?step=choose-type&oauth=true`)
+        // User has completed onboarding - redirect to appropriate dashboard
+        if (usuario?.clinica_id) {
+          // Update onboarding status
+          await supabase.auth.updateUser({
+            data: { onboarding_status: 'completed' }
+          })
+          
+          if (usuario.perfil === 'master') {
+            return NextResponse.redirect(`${origin}/dashboard/master`)
+          } else if (usuario.perfil === 'admin') {
+            return NextResponse.redirect(`${origin}/dashboard/admin`)
+          }
+          return NextResponse.redirect(`${origin}/dashboard`)
         }
 
-        // Se o usuário não tem clínica associada, precisa escolher o tipo
-        if (!usuario.clinica_id) {
-          return NextResponse.redirect(`${origin}/auth/cadastro?step=choose-type`)
+        // User just verified email - needs to complete onboarding
+        await supabase.auth.updateUser({
+          data: { onboarding_status: 'pending_clinic' }
+        })
+        
+        // Redirect to onboarding if next param points there, otherwise go to onboarding
+        if (next === '/onboarding') {
+          return NextResponse.redirect(`${origin}/onboarding`)
         }
-
-        // Redirect based on user role
-        if (usuario?.perfil === 'master') {
-          return NextResponse.redirect(`${origin}/dashboard/master`)
-        } else if (usuario?.perfil === 'admin') {
-          return NextResponse.redirect(`${origin}/dashboard/admin`)
-        }
-
-        return NextResponse.redirect(`${origin}/dashboard`)
+        return NextResponse.redirect(`${origin}/onboarding`)
       }
-
+      
       return NextResponse.redirect(`${origin}${next}`)
     }
   }

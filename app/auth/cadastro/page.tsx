@@ -1,293 +1,198 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
-import { useEmailVerification } from '@/hooks/use-email-verification'
-import {
-  StepCreateAccount,
-  StepVerifyEmail,
-  StepChooseType,
-  StepEmployeeForm,
-  StepOwnerForm,
-} from './components'
-import { validateInviteCode, validateCNPJ, createClinicAction, joinClinicAction } from '@/app/actions/clinic-invite'
-import type { SignupStep, CreateAccountData, EmployeeFormData, OwnerFormData, OAuthProvider } from '@/lib/types/signup'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { HeartPulse, ArrowRight, Eye, EyeOff, Check, Loader2 } from 'lucide-react'
+import { signup } from '@/app/actions/auth'
 
 export default function CadastroPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const supabase = createClient()
-
-  // Estado do wizard - SEMPRE começa em create-account
-  const [step, setStep] = useState<SignupStep>('create-account')
-  const [email, setEmail] = useState<string>('')
-  const [userName, setUserName] = useState<string>('')
-  const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // Se vier do OAuth callback, carregar dados do usuário
-  useEffect(() => {
-    async function loadOAuthUser() {
-      // Só executa se tiver parâmetro step=choose-type E oauth=true
-      if (searchParams.get('step') === 'choose-type' && searchParams.get('oauth') === 'true') {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user?.email_confirmed_at) {
-          setEmail(user.email || '')
-          setUserName(user.user_metadata?.nome || user.user_metadata?.full_name || user.user_metadata?.name || '')
-          setStep('choose-type')
-        }
-      }
-    }
-    loadOAuthUser()
-  }, []) // Executa apenas uma vez no mount
-
-  // Hook de verificação de email
-  const { isVerified, resendEmail } = useEmailVerification({
-    pollingInterval: 3000,
-    onVerified: () => {
-      // Avançar para próxima etapa quando verificado
-      setStep('choose-type')
-    },
-  })
-
-  // ============================================
-  // Handlers para cada etapa
-  // ============================================
-
-  // Etapa 1: Criar conta com email/senha
-  const handleCreateAccount = useCallback(async (data: CreateAccountData) => {
+  async function handleSubmit(formData: FormData) {
     setIsLoading(true)
     setError(null)
-
-    try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            nome: data.nome,
-          },
-        },
-      })
-
-      if (authError) {
-        if (authError.message.includes('already registered')) {
-          throw new Error('Este email já está cadastrado. Faça login.')
-        }
-        throw authError
-      }
-
-      if (!authData.user) {
-        throw new Error('Erro ao criar conta')
-      }
-
-      setEmail(data.email)
-      setUserName(data.nome)
-
-      // Verificar se precisa confirmar email
-      if (!authData.user.email_confirmed_at) {
-        setStep('verify-email')
-      } else {
-        setStep('choose-type')
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao criar conta'
-      setError(message)
-    } finally {
+    
+    const result = await signup(formData)
+    
+    if (result?.error) {
+      setError(result.error)
       setIsLoading(false)
     }
-  }, [supabase.auth])
-
-  // Etapa 1 alt: Login com OAuth (Google)
-  const handleOAuthSignIn = useCallback(async (provider: OAuthProvider) => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/auth/cadastro/completar`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
-        },
-      })
-
-      if (oauthError) {
-        throw oauthError
-      }
-      // Redireciona automaticamente
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao conectar com provedor'
-      setError(message)
-      setIsLoading(false)
-    }
-  }, [supabase.auth])
-
-  // Etapa 2: Reenviar email de verificação
-  const handleResendEmail = useCallback(async () => {
-    try {
-      await resendEmail()
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao reenviar email'
-      setError(message)
-    }
-  }, [resendEmail])
-
-  // Etapa 2: Email verificado, avançar
-  const handleEmailVerified = useCallback(() => {
-    setStep('choose-type')
-  }, [])
-
-  // Etapa 3: Escolher tipo (funcionário ou proprietário)
-  const handleChooseType = useCallback((type: 'employee' | 'owner') => {
-    if (type === 'employee') {
-      setStep('employee-form')
-    } else {
-      setStep('owner-form')
-    }
-  }, [])
-
-  // Voltar para escolha de tipo
-  const handleBackToChooseType = useCallback(() => {
-    setError(null)
-    setStep('choose-type')
-  }, [])
-
-  // Etapa 4a: Funcionário - Validar código
-  const handleValidateCode = useCallback(async (code: string) => {
-    return await validateInviteCode(code)
-  }, [])
-
-  // Etapa 4a: Funcionário - Usar código e entrar
-  const handleEmployeeSubmit = useCallback(async (data: EmployeeFormData) => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const result = await joinClinicAction({
-        codigoConvite: data.codigoConvite,
-        telefone: data.telefone,
-      })
-
-      if (!result.success) {
-        throw new Error(result.error || 'Erro ao entrar na clínica')
-      }
-
-      // Sucesso - redirecionar para dashboard
-      router.push('/dashboard')
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao entrar na clínica'
-      setError(message)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [router])
-
-  // Etapa 4b: Proprietário - Validar CNPJ
-  const handleValidateCNPJ = useCallback(async (cnpj: string) => {
-    return await validateCNPJ(cnpj)
-  }, [])
-
-  // Etapa 4b: Proprietário - Criar clínica
-  const handleOwnerSubmit = useCallback(async (data: OwnerFormData) => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const result = await createClinicAction({
-        nomeClinica: data.nomeClinica,
-        cnpj: data.cnpj,
-        telefone: data.telefone,
-        planoId: data.planoId,
-      })
-
-      if (!result.success) {
-        throw new Error(result.error || 'Erro ao criar clínica')
-      }
-
-      // Sucesso - redirecionar para dashboard
-      router.push('/dashboard')
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao criar clínica'
-      setError(message)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [router])
-
-  // ============================================
-  // Renderização
-  // ============================================
+  }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4 py-12">
-      {/* Etapa 1: Criar conta */}
-      {step === 'create-account' && (
-        <StepCreateAccount
-          onSubmit={handleCreateAccount}
-          onOAuthSignIn={handleOAuthSignIn}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
+    <div className="min-h-screen gradient-bg flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl" />
+      
+      <div className="w-full max-w-lg relative">
+        {/* Logo */}
+        <Link href="/" className="flex items-center justify-center gap-2 mb-8">
+          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
+            <HeartPulse className="h-6 w-6 text-primary" />
+          </div>
+          <span className="text-2xl font-bold text-foreground">ClinicOps</span>
+        </Link>
 
-      {/* Etapa 2: Verificar email */}
-      {step === 'verify-email' && (
-        <StepVerifyEmail
-          email={email}
-          onVerified={handleEmailVerified}
-          onResendEmail={handleResendEmail}
-          isVerified={isVerified}
-          isLoading={isLoading}
-        />
-      )}
+        {/* Progress indicator */}
+        <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+                1
+              </div>
+              <span className="text-xs font-medium text-foreground mt-2">Criar conta</span>
+            </div>
+            <div className="w-16 h-0.5 bg-border mx-2 mt-[-20px]" />
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-semibold">
+                2
+              </div>
+              <span className="text-xs text-muted-foreground mt-2">Verificar</span>
+            </div>
+            <div className="w-16 h-0.5 bg-border mx-2 mt-[-20px]" />
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-semibold">
+                3
+              </div>
+              <span className="text-xs text-muted-foreground mt-2">Configurar</span>
+            </div>
+          </div>
+        </div>
 
-      {/* Etapa 3: Escolher tipo */}
-      {step === 'choose-type' && (
-        <StepChooseType
-          onChoose={handleChooseType}
-          isLoading={isLoading}
-          userName={userName}
-        />
-      )}
+        <Card className="glass-card border-0 shadow-xl">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-2xl font-bold text-foreground">Crie sua conta</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Primeiro, vamos criar sua conta pessoal. A configuracao da clinica vem depois.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <form action={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+                  {error}
+                </div>
+              )}
 
-      {/* Etapa 4a: Formulário funcionário */}
-      {step === 'employee-form' && (
-        <StepEmployeeForm
-          onSubmit={handleEmployeeSubmit}
-          onBack={handleBackToChooseType}
-          onValidateCode={handleValidateCode}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
+              <div className="space-y-2">
+                <Label htmlFor="nome">Nome completo</Label>
+                <Input
+                  id="nome"
+                  name="nome"
+                  type="text"
+                  placeholder="Seu nome completo"
+                  required
+                  disabled={isLoading}
+                  className="h-12 rounded-xl bg-background/50"
+                />
+              </div>
 
-      {/* Etapa 4b: Formulário proprietário */}
-      {step === 'owner-form' && (
-        <StepOwnerForm
-          onSubmit={handleOwnerSubmit}
-          onBack={handleBackToChooseType}
-          onValidateCNPJ={handleValidateCNPJ}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  required
+                  disabled={isLoading}
+                  className="h-12 rounded-xl bg-background/50"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Voce precisara confirmar este email antes de continuar
+                </p>
+              </div>
 
-      {/* Link para login */}
-      {step === 'create-account' && (
-        <p className="mt-6 text-sm text-muted-foreground">
-          Já tem uma conta?{' '}
-          <Link href="/auth/login" className="text-primary hover:underline font-medium">
-            Entrar
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Minimo 6 caracteres"
+                    required
+                    disabled={isLoading}
+                    minLength={6}
+                    className="h-12 rounded-xl pr-10 bg-background/50"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full h-12 rounded-xl shadow-lg shadow-primary/25 mt-6"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Criando conta...
+                  </>
+                ) : (
+                  <>
+                    Continuar
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </form>
+
+            {/* Benefits */}
+            <div className="mt-8 pt-6 border-t border-border/50">
+              <p className="text-xs text-muted-foreground mb-3 font-medium">O que voce recebe:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  '14 dias gratis',
+                  'Sem cartao',
+                  'Cancele quando quiser',
+                ].map((benefit) => (
+                  <div key={benefit} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Check className="h-3 w-3 text-primary" />
+                    </div>
+                    {benefit}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              Ja tem uma conta?{' '}
+              <Link href="/auth/login" className="text-primary hover:underline font-medium">
+                Fazer login
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          Ao continuar, voce concorda com nossos{' '}
+          <Link href="#" className="underline hover:text-foreground">
+            Termos de Servico
+          </Link>{' '}
+          e{' '}
+          <Link href="#" className="underline hover:text-foreground">
+            Politica de Privacidade
           </Link>
         </p>
-      )}
+      </div>
     </div>
   )
 }

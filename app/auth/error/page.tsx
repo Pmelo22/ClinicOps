@@ -28,7 +28,7 @@ export default function AuthErrorPage() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            O link pode ter expirado ou ja foi utilizado.
+            O link pode ter expirado ou ja foi utilizado. 
             Por favor, tente novamente ou entre em contato com o suporte.
           </p>
         </CardContent>

@@ -35,7 +35,7 @@ export default function AdminConfiguracoesPage() {
     async function loadData() {
       setIsLoading(true)
       const supabase = createClient()
-
+      
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/auth/login')
@@ -45,10 +45,10 @@ export default function AdminConfiguracoesPage() {
       const { data: usuario } = await supabase
         .from('usuarios')
         .select('*, clinica:clinicas(*)')
-        .eq('auth_user_id', user.id)
+        .eq('id', user.id)
         .single()
 
-      if (!usuario || usuario.perfil !== 'admin_tenant') {
+      if (!usuario || usuario.perfil !== 'admin') {
         router.push('/dashboard')
         return
       }
@@ -146,7 +146,7 @@ export default function AdminConfiguracoesPage() {
   return (
     <div>
       <DashboardHeader title="Configuracoes" userName={userName} />
-
+      
       <div className="p-6">
         <Tabs defaultValue="clinica" className="space-y-6">
           <TabsList>

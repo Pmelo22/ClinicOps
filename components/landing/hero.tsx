@@ -1,66 +1,77 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Shield, Clock, Users } from 'lucide-react'
+import { ArrowRight, Shield, Clock, Users, Sparkles } from 'lucide-react'
 
 export function Hero() {
   return (
-    <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
-
-      <div className="relative mx-auto max-w-7xl">
+    <section className="relative pt-40 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden gradient-bg min-h-screen flex items-center">
+      {/* Decorative blobs */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl blob" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl blob" style={{ animationDelay: '-4s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/30 rounded-full blur-3xl" />
+      
+      <div className="relative mx-auto max-w-7xl w-full">
         <div className="text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8">
-            <Shield className="h-4 w-4" />
-            <span>Conformidade LGPD garantida</span>
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass text-sm font-medium mb-8 text-foreground">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span>Simplifique a gestao da sua clinica</span>
           </div>
-
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight text-balance">
-            A plataforma completa para{' '}
-            <span className="text-primary">gestao de clinicas</span>
+          
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground tracking-tight text-balance leading-tight">
+            Sem estresse,{' '}
+            <span className="text-primary relative">
+              so progresso
+              <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none">
+                <path d="M2 10C50 4 100 2 150 6C200 10 250 4 298 8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="text-accent"/>
+              </svg>
+            </span>
           </h1>
-
-          <p className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-            Simplifique a administracao da sua clinica com nossa solucao integrada.
-            Gerencie pacientes, atendimentos e documentos em um so lugar, com total
-            seguranca e conformidade regulatoria.
+          
+          <p className="mt-8 text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto text-pretty leading-relaxed">
+            Tenha uma plataforma completa e um sistema sob medida que leva sua clinica aos seus objetivos mais rapido.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" asChild className="w-full sm:w-auto">
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button size="lg" asChild className="w-full sm:w-auto h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
               <Link href="/auth/cadastro">
-                Comecar Teste Gratuito
-                <ArrowRight className="ml-2 h-4 w-4" />
+                Comecar Agora
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="w-full sm:w-auto bg-transparent">
-              <Link href="/pricing">Ver Planos e Precos</Link>
+            <Button size="lg" variant="outline" asChild className="w-full sm:w-auto h-14 px-8 text-base rounded-2xl bg-transparent glass border-0">
+              <Link href="/pricing">Ver Planos</Link>
             </Button>
+          </div>
+
+          <div className="mt-8 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <Shield className="h-4 w-4 text-primary" />
+            <span>14 dias gratis - Conformidade LGPD garantida</span>
           </div>
         </div>
 
-        <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
-          <div className="flex flex-col items-center text-center">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
-              <Users className="h-6 w-6" />
+        <div className="mt-24 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="glass-card flex flex-col items-center text-center p-8 rounded-3xl">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary mb-5">
+              <Users className="h-7 w-7" />
             </div>
-            <div className="text-3xl font-bold text-foreground">500+</div>
-            <div className="text-sm text-muted-foreground">Clinicas ativas</div>
+            <div className="text-4xl font-bold text-foreground">500+</div>
+            <div className="text-sm text-muted-foreground mt-1">Clinicas ativas</div>
           </div>
-
-          <div className="flex flex-col items-center text-center">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 text-accent mb-4">
-              <Clock className="h-6 w-6" />
+          
+          <div className="glass-card flex flex-col items-center text-center p-8 rounded-3xl">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/10 text-accent mb-5">
+              <Clock className="h-7 w-7" />
             </div>
-            <div className="text-3xl font-bold text-foreground">40%</div>
-            <div className="text-sm text-muted-foreground">Reducao de tempo administrativo</div>
+            <div className="text-4xl font-bold text-foreground">40%</div>
+            <div className="text-sm text-muted-foreground mt-1">Menos tempo administrativo</div>
           </div>
-
-          <div className="flex flex-col items-center text-center">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
-              <Shield className="h-6 w-6" />
+          
+          <div className="glass-card flex flex-col items-center text-center p-8 rounded-3xl">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary mb-5">
+              <Shield className="h-7 w-7" />
             </div>
-            <div className="text-3xl font-bold text-foreground">100%</div>
-            <div className="text-sm text-muted-foreground">Conformidade LGPD</div>
+            <div className="text-4xl font-bold text-foreground">100%</div>
+            <div className="text-sm text-muted-foreground mt-1">Conformidade LGPD</div>
           </div>
         </div>
       </div>

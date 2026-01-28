@@ -18,9 +18,9 @@ export default async function MasterAuditoriaPage({
 }) {
   const params = await searchParams
   const supabase = await createClient()
-
+  
   const { data: { user } } = await supabase.auth.getUser()
-
+  
   if (!user) {
     redirect('/auth/login')
   }
@@ -28,7 +28,7 @@ export default async function MasterAuditoriaPage({
   const { data: usuario } = await supabase
     .from('usuarios')
     .select('*')
-    .eq('auth_user_id', user.id)
+    .eq('id', user.id)
     .single()
 
   if (!usuario || usuario.perfil !== 'master') {
@@ -67,7 +67,7 @@ export default async function MasterAuditoriaPage({
   return (
     <div>
       <DashboardHeader title="Auditoria" userName={usuario.nome} />
-
+      
       <div className="p-6 space-y-6">
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
           <form className="relative max-w-sm flex-1">
