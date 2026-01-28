@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { HeartPulse, ArrowRight, Eye, EyeOff, Check, Loader2 } from 'lucide-react'
+import { ArrowRight, Eye, EyeOff, Check, Loader2 } from 'lucide-react'
 import { signup } from '@/app/actions/auth'
 import { OAuthButtons } from '@/components/auth/oauth-buttons'
 
@@ -36,10 +36,7 @@ export default function CadastroPage() {
       <div className="w-full max-w-lg relative">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-            <HeartPulse className="h-6 w-6 text-primary" />
-          </div>
-          <span className="text-2xl font-bold text-foreground">ClinicOps</span>
+          <img src="/logo-new.svg" alt="ClinicOps" className="h-12" />
         </Link>
 
         {/* Progress indicator */}
