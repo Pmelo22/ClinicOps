@@ -103,13 +103,7 @@ export async function login(formData: FormData) {
 
     revalidatePath('/', 'layout')
     
-    if (usuario.perfil === 'master') {
-      redirect('/dashboard/master')
-    } else if (usuario.perfil === 'admin') {
-      redirect('/dashboard/admin')
-    } else {
-      redirect('/dashboard')
-    }
+    redirect('/dashboard')
   }
 
   return { error: 'Erro ao fazer login' }
@@ -334,7 +328,7 @@ export async function createClinic(formData: FormData) {
   })
 
   revalidatePath('/dashboard')
-  redirect('/dashboard/admin')
+  redirect('/dashboard')
 }
 
 // ==========================================

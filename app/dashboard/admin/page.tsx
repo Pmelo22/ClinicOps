@@ -21,16 +21,13 @@ export default async function AdminDashboardPage() {
 
   const { data: usuario } = await supabase
     .from('usuarios')
-    .select('*, clinica:clinicas(*, plano:planos(*))')
+    .select('id, nome, email, perfil, clinica_id, created_at, clinicas(id, nome, status, stripe_plan_id, stripe_customer_id, stripe_subscription_id, created_at)')
     .eq('id', user.id)
     .single()
 
   if (!usuario || usuario.perfil !== 'admin') {
     redirect('/dashboard')
   }
-
-  const clinica = usuario.clinica
-  const plano = clinica?.plano
 
   // Get usage stats
   const [
@@ -51,46 +48,20 @@ export default async function AdminDashboardPage() {
   ])
 
   const armazenamentoUsado = usoRecursos?.armazenamento_usado_mb || 0
-  const limiteUsuarios = plano?.limite_usuarios || 3
-  const limitePacientes = plano?.limite_pacientes || 500
-  const limiteArmazenamento = plano?.limite_armazenamento_mb || 1024
+  // Default limits for now (these should come from clinicas table or planos relation)
+  const limiteUsuarios = 10
+  const limitePacientes = 500
+  const limiteArmazenamento = 1024
 
   const percentUsuarios = Math.round((totalUsuarios || 0) / limiteUsuarios * 100)
   const percentPacientes = Math.round((totalPacientes || 0) / limitePacientes * 100)
   const percentArmazenamento = Math.round(armazenamentoUsado / limiteArmazenamento * 100)
-
-  // Check trial status
-  const isTrialEnding = clinica?.status === 'trial' && clinica?.data_fim_trial
-  const trialDaysLeft = isTrialEnding 
-    ? Math.max(0, Math.ceil((new Date(clinica.data_fim_trial).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : 0
 
   return (
     <div>
       <DashboardHeader title="Painel Administrativo" userName={usuario.nome} />
       
       <div className="p-6 space-y-6">
-        {isTrialEnding && trialDaysLeft <= 7 && (
-          <Card className="border-amber-500/50 bg-amber-500/10">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-amber-600" />
-                <div>
-                  <p className="font-medium text-amber-800">
-                    {trialDaysLeft === 0 
-                      ? 'Seu periodo de teste termina hoje!'
-                      : `Seu periodo de teste termina em ${trialDaysLeft} dia${trialDaysLeft > 1 ? 's' : ''}`
-                    }
-                  </p>
-                  <p className="text-sm text-amber-700">
-                    Atualize para um plano pago para continuar usando todos os recursos.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatsCard
             title="Total de Usuarios"

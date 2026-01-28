@@ -10,38 +10,38 @@ import {
 const features = [
   {
     icon: Users,
-    title: 'Gestao de Pacientes',
-    description: 'Cadastro completo com historico medico, prontuarios e documentos centralizados em um so lugar.',
+    title: 'Gestão de Pacientes',
+    description: 'Cadastro completo com histórico médico, prontuários e documentos centralizados em um só lugar.',
     color: 'primary',
   },
   {
     icon: Calendar,
     title: 'Agendamento Inteligente',
-    description: 'Sistema de agendamento com lembretes automaticos, confirmacao e gestao de horarios.',
+    description: 'Sistema de agendamento com lembretes automáticos, confirmação e gestão de horários.',
     color: 'accent',
   },
   {
     icon: FileText,
-    title: 'Prontuario Eletronico',
-    description: 'Documentacao clinica digital com assinatura eletronica e rastreabilidade completa.',
+    title: 'Prontuário Eletrônico',
+    description: 'Documentação clínica digital com assinatura eletrônica e rastreabilidade completa.',
     color: 'primary',
   },
   {
     icon: BarChart3,
-    title: 'Relatorios e Analytics',
-    description: 'Dashboards personalizados com metricas de atendimento, financeiro e operacional.',
+    title: 'Relatórios e Analytics',
+    description: 'Dashboards personalizados com métricas de atendimento, financeiro e operacional.',
     color: 'accent',
   },
   {
     icon: Shield,
-    title: 'Seguranca e Compliance',
+    title: 'Segurança e Compliance',
     description: 'Criptografia de dados, auditoria completa e total conformidade com a LGPD.',
     color: 'primary',
   },
   {
     icon: Smartphone,
     title: 'Acesso Multiplataforma',
-    description: 'Acesse de qualquer dispositivo com interface responsiva e sincronizacao em tempo real.',
+    description: 'Acesse de qualquer dispositivo com interface responsiva e sincronização em tempo real.',
     color: 'accent',
   },
 ]
@@ -59,10 +59,10 @@ export function Features() {
             Recursos
           </span>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground text-balance">
-            Tudo que sua clinica precisa em uma so plataforma
+            Tudo que sua clínica precisa em uma só plataforma
           </h2>
           <p className="mt-6 text-xl text-muted-foreground">
-            Recursos completos para otimizar a gestao e melhorar o atendimento aos seus pacientes.
+            Recursos completos para otimizar a gestão e melhorar o atendimento aos seus pacientes.
           </p>
         </div>
 

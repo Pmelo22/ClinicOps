@@ -8,8 +8,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'ClinicOps - Gestao Inteligente para Clinicas Medicas',
-  description: 'Plataforma SaaS completa para gestao de clinicas medicas. Gerencie pacientes, atendimentos, documentos e muito mais com seguranca e conformidade LGPD.',
+  title: 'ClinicOps - Gestão Inteligente para Clínicas Médicas',
+  description: 'Plataforma SaaS completa para gestão de clínicas médicas. Gerencie pacientes, atendimentos, documentos e muito mais com segurança e conformidade LGPD.',
   generator: 'v0.app',
   icons: {
     icon: [

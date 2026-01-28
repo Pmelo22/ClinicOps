@@ -21,7 +21,7 @@ export default async function MasterPlanosPage() {
 
   const { data: usuario } = await supabase
     .from('usuarios')
-    .select('*')
+    .select('id, nome, email, perfil, clinica_id, created_at, clinicas(id, nome, status, stripe_plan_id, stripe_customer_id, stripe_subscription_id, created_at)')
     .eq('id', user.id)
     .single()
 

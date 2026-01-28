@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { HeartPulse, ArrowLeft, ArrowRight, Loader2, CheckCircle2, Building2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Loader2, CheckCircle2, Building2 } from 'lucide-react'
 import { joinClinicByCode } from '@/app/actions/auth'
 
 export default function EntrarClinicaPage() {
@@ -59,7 +59,7 @@ export default function EntrarClinicaPage() {
     
     const fullCode = code.join('')
     if (fullCode.length !== 8) {
-      setError('Digite o codigo completo de 8 caracteres')
+      setError('Digite o código completo de 8 caracteres')
       return
     }
 
@@ -88,10 +88,7 @@ export default function EntrarClinicaPage() {
       <div className="w-full max-w-lg relative">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-            <HeartPulse className="h-6 w-6 text-primary" />
-          </div>
-          <span className="text-2xl font-bold text-foreground">ClinicOps</span>
+          <img src="/logo-new.svg" alt="ClinicOps" className="h-12" />
         </Link>
 
         {/* Back button */}
@@ -110,10 +107,10 @@ export default function EntrarClinicaPage() {
               <Building2 className="h-8 w-8 text-accent" />
             </div>
             <CardTitle className="text-2xl font-bold text-foreground">
-              Entrar em uma clinica
+              Entrar em uma clínica
             </CardTitle>
             <CardDescription className="text-muted-foreground text-base">
-              Digite o codigo de convite de 8 caracteres fornecido pelo administrador da clinica
+              Digite o código de convite de 8 caracteres fornecido pelo administrador da clínica
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -146,7 +143,7 @@ export default function EntrarClinicaPage() {
               </div>
 
               <p className="text-xs text-muted-foreground text-center">
-                O codigo e composto por letras e numeros, sem espacos
+                O código é composto por letras e números, sem espaços
               </p>
 
               <Button 
@@ -157,11 +154,11 @@ export default function EntrarClinicaPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Verificando codigo...
+                    Verificando código...
                   </>
                 ) : (
                   <>
-                    Entrar na clinica
+                    Entrar na clínica
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
@@ -170,18 +167,18 @@ export default function EntrarClinicaPage() {
 
             {/* Info box */}
             <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
-              <h4 className="font-medium text-foreground mb-2 text-sm">Como obter um codigo?</h4>
+              <h4 className="font-medium text-foreground mb-2 text-sm">Como obter um código?</h4>
               <p className="text-sm text-muted-foreground">
-                O codigo de convite e gerado pelo administrador da clinica. 
-                Se voce nao tem um codigo, entre em contato com o responsavel pela clinica.
+                O código de convite é gerado pelo administrador da clínica. 
+                Se você não tem um código, entre em contato com o responsável pela clínica.
               </p>
             </div>
 
             <div className="text-center pt-4 border-t border-border/50">
               <p className="text-sm text-muted-foreground">
-                Prefere criar sua propria clinica?{' '}
+                Prefere criar sua própria clínica?{' '}
                 <Link href="/onboarding/criar-clinica" className="text-primary hover:underline font-medium">
-                  Criar clinica
+                  Criar clínica
                 </Link>
               </p>
             </div>

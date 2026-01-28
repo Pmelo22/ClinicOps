@@ -13,15 +13,15 @@ export interface Product {
 export const PLANS: Product[] = [
   {
     id: 'basico',
-    name: 'Basico',
-    description: 'Ideal para clinicas pequenas iniciando a digitalizacao',
+    name: 'Básico',
+    description: 'Ideal para clínicas pequenas iniciando a digitalização',
     priceInCents: 9900, // R$ 99,00
     features: [
-      'Ate 3 usuarios',
-      'Ate 500 pacientes',
+      'Até 3 usuários',
+      'Até 500 pacientes',
       '1GB de armazenamento',
-      'Gestao de pacientes',
-      'Agendamento basico',
+      'Gestão de pacientes',
+      'Agendamento básico',
       'Suporte por email',
     ],
     limiteUsuarios: 3,
@@ -31,16 +31,16 @@ export const PLANS: Product[] = [
   {
     id: 'profissional',
     name: 'Profissional',
-    description: 'Para clinicas em crescimento que precisam de mais recursos',
+    description: 'Para clínicas em crescimento que precisam de mais recursos',
     priceInCents: 24900, // R$ 249,00
     features: [
-      'Ate 10 usuarios',
-      'Ate 2.000 pacientes',
+      'Até 10 usuários',
+      'Até 2.000 pacientes',
       '5GB de armazenamento',
-      'Todos os recursos do Basico',
-      'Relatorios avancados',
-      'Integracao com calendario',
-      'Suporte prioritario',
+      'Todos os recursos do Básico',
+      'Relatórios avançados',
+      'Integração com calendário',
+      'Suporte prioritário',
     ],
     highlighted: true,
     limiteUsuarios: 10,
@@ -50,14 +50,14 @@ export const PLANS: Product[] = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    description: 'Solucao completa para redes de clinicas e hospitais',
+    description: 'Solução completa para redes de clínicas e hospitais',
     priceInCents: 49900, // R$ 499,00
     features: [
-      'Usuarios ilimitados',
+      'Usuários ilimitados',
       'Pacientes ilimitados',
       '20GB de armazenamento',
       'Todos os recursos do Profissional',
-      'API de integracao',
+      'API de integração',
       'Multi-unidades',
       'Suporte 24/7 dedicado',
       'Treinamento personalizado',

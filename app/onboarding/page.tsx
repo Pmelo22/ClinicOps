@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { HeartPulse, Building2, Users, CheckCircle2, ArrowRight } from 'lucide-react'
+import { Building2, Users, CheckCircle2, ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function OnboardingPage() {
@@ -33,7 +33,7 @@ export default function OnboardingPage() {
           }
         })
       
-      setUserName(user.user_metadata?.nome || 'Usuario')
+      setUserName(user.user_metadata?.nome || 'Usuário')
       
       // Update onboarding status
       supabase.auth.updateUser({
@@ -51,10 +51,7 @@ export default function OnboardingPage() {
       <div className="w-full max-w-2xl relative">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-            <HeartPulse className="h-6 w-6 text-primary" />
-          </div>
-          <span className="text-2xl font-bold text-foreground">ClinicOps</span>
+          <img src="/logo-new.svg" alt="ClinicOps" className="h-12" />
         </Link>
 
         {/* Progress indicator */}
@@ -86,10 +83,10 @@ export default function OnboardingPage() {
         <Card className="glass-card border-0 shadow-xl">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-2xl font-bold text-foreground">
-              Ola, {userName}! Bem-vindo ao ClinicOps
+              Olá, {userName}! Bem-vindo ao ClinicOps
             </CardTitle>
             <CardDescription className="text-muted-foreground text-base">
-              Como voce gostaria de comecar?
+              Como você gostaria de começar?
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -104,13 +101,13 @@ export default function OnboardingPage() {
                   <Users className="h-7 w-7 text-accent" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Entrar em uma clinica
+                  Entrar em uma clínica
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Tenho um codigo de convite de uma clinica existente
+                  Tenho um código de convite de uma clínica existente
                 </p>
                 <div className="flex items-center text-primary text-sm font-medium">
-                  Usar codigo de convite
+                  Usar código de convite
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </button>
@@ -124,13 +121,13 @@ export default function OnboardingPage() {
                   <Building2 className="h-7 w-7 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Criar uma nova clinica
+                  Criar uma nova clínica
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Sou dono/administrador e quero cadastrar minha clinica
+                  Sou dono/administrador e quero cadastrar minha clínica
                 </p>
                 <div className="flex items-center text-primary text-sm font-medium">
-                  Cadastrar clinica
+                  Cadastrar clínica
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </button>
@@ -139,8 +136,8 @@ export default function OnboardingPage() {
             {/* Info box */}
             <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
               <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">Nao tem certeza?</strong> Se voce foi convidado por alguem, escolha "Entrar em uma clinica". 
-                Se voce e o responsavel pela clinica, escolha "Criar uma nova clinica".
+                <strong className="text-foreground">Não tem certeza?</strong> Se você foi convidado por alguém, escolha "Entrar em uma clínica". 
+                Se você é o responsável pela clínica, escolha "Criar uma nova clínica".
               </p>
             </div>
           </CardContent>
