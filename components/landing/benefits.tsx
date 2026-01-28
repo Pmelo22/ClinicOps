@@ -6,20 +6,20 @@ const benefits = [
     icon: UserCog,
     color: 'primary',
     items: [
-      'Visao completa de todas as operacoes',
-      'Controle de usuarios e permissoes',
-      'Relatorios financeiros detalhados',
+      'Visão completa de todas as operações',
+      'Controle de usuários e permissões',
+      'Relatórios financeiros detalhados',
       'Monitoramento de uso do plano',
     ],
   },
   {
-    title: 'Para Profissionais de Saude',
+    title: 'Para Profissionais de Saúde',
     icon: Stethoscope,
     color: 'accent',
     items: [
-      'Acesso rapido ao historico do paciente',
+      'Acesso rápido ao histórico do paciente',
       'Registro simplificado de atendimentos',
-      'Emissao de receitas e atestados',
+      'Emissão de receitas e atestados',
       'Agenda integrada e organizada',
     ],
   },
@@ -28,10 +28,10 @@ const benefits = [
     icon: Phone,
     color: 'primary',
     items: [
-      'Agendamento facil e intuitivo',
-      'Cadastro rapido de pacientes',
-      'Confirmacao automatica de consultas',
-      'Gestao de fila de espera',
+      'Agendamento fácil e intuitivo',
+      'Cadastro rápido de pacientes',
+      'Confirmação automática de consultas',
+      'Gestão de fila de espera',
     ],
   },
 ]
@@ -46,13 +46,13 @@ export function Benefits() {
       <div className="mx-auto max-w-7xl relative">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            Beneficios
+            Benefícios
           </span>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground text-balance">
-            Beneficios para toda a equipe
+            Benefícios para toda a equipe
           </h2>
           <p className="mt-6 text-xl text-muted-foreground">
-            Cada membro da sua equipe tem ferramentas especificas para suas necessidades.
+            Cada membro da sua equipe tem ferramentas específicas para suas necessidades.
           </p>
         </div>
 

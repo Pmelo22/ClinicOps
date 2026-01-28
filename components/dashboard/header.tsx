@@ -19,9 +19,10 @@ interface DashboardHeaderProps {
   title: string
   userName: string
   onMenuClick?: () => void
+  trialDaysRemaining?: number
 }
 
-export function DashboardHeader({ title, userName, onMenuClick }: DashboardHeaderProps) {
+export function DashboardHeader({ title, userName, onMenuClick, trialDaysRemaining }: DashboardHeaderProps) {
   const [searchQuery, setSearchQuery] = useState('')
 
   return (
@@ -36,7 +37,22 @@ export function DashboardHeader({ title, userName, onMenuClick }: DashboardHeade
         <span className="sr-only">Toggle menu</span>
       </Button>
 
-      <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+          
+          {/* Trial Badge */}
+          {trialDaysRemaining !== undefined && trialDaysRemaining > 0 && (
+            <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+              trialDaysRemaining <= 3 
+                ? 'bg-yellow-100 text-yellow-800' 
+                : 'bg-green-100 text-green-800'
+            }`}>
+              {trialDaysRemaining} dia{trialDaysRemaining !== 1 ? 's' : ''} grátis
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="flex-1" />
 

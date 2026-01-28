@@ -21,7 +21,7 @@ export default async function DashboardPage() {
 
   const { data: usuario } = await supabase
     .from('usuarios')
-    .select('*, clinica:clinicas(*)')
+    .select('id, nome, email, perfil, clinica_id, created_at, clinicas(id, nome, status, stripe_plan_id, stripe_customer_id, stripe_subscription_id, created_at)')
     .eq('id', user.id)
     .single()
 
@@ -129,7 +129,23 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <DashboardHeader title="Visao Geral" userName={usuario.nome} />
+      {/* Calculate days remaining */}
+      {(() => {
+        const created = new Date(usuario.clinica?.created_at || new Date().toISOString())
+        const trialEndDate = new Date(created.getTime() + 14 * 24 * 60 * 60 * 1000)
+        const today = new Date()
+        const millisecondsRemaining = trialEndDate.getTime() - today.getTime()
+        const daysLeft = Math.ceil(millisecondsRemaining / (1000 * 60 * 60 * 24))
+        const daysRemaining = Math.max(0, daysLeft)
+        
+        return (
+          <DashboardHeader 
+            title="Visão Geral" 
+            userName={usuario.nome}
+            trialDaysRemaining={daysRemaining}
+          />
+        )
+      })()}
       
       <div className="p-6 space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -176,7 +192,7 @@ export default async function DashboardPage() {
                           {appointment.paciente?.nome || 'Paciente'}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {appointment.tipo_procedimento}
+                          {appointment.tipo}
                         </p>
                       </div>
                       <div className="text-right">

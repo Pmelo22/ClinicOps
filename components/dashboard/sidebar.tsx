@@ -21,6 +21,7 @@ import {
   BarChart3,
   UserCog,
   UserPlus,
+  User,
 } from 'lucide-react'
 import { signOut } from '@/app/actions/auth'
 import type { UserRole } from '@/lib/types'
@@ -59,7 +60,7 @@ const navItems: NavItem[] = [
   },
   {
     href: '/dashboard/admin/usuarios',
-    label: 'Usuarios',
+    label: 'Usuários',
     icon: UserCog,
     roles: ['admin'],
   },
@@ -71,7 +72,7 @@ const navItems: NavItem[] = [
   },
   {
     href: '/dashboard/admin/relatorios',
-    label: 'Relatorios',
+    label: 'Relatórios',
     icon: BarChart3,
     roles: ['admin'],
   },
@@ -83,7 +84,7 @@ const navItems: NavItem[] = [
   },
   {
     href: '/dashboard/master/clinicas',
-    label: 'Clinicas',
+    label: 'Clínicas',
     icon: Building2,
     roles: ['master'],
   },
@@ -98,6 +99,18 @@ const navItems: NavItem[] = [
     label: 'Auditoria',
     icon: Shield,
     roles: ['master'],
+  },
+  {
+    href: '/dashboard/perfil',
+    label: 'Meu Perfil',
+    icon: User,
+    roles: ['operador', 'admin', 'master'],
+  },
+  {
+    href: '/dashboard/assinaturas',
+    label: 'Assinaturas',
+    icon: CreditCard,
+    roles: ['admin', 'master'],
   },
 ]
 

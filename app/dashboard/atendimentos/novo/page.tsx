@@ -29,7 +29,7 @@ export default function NovoAtendimentoPage() {
   const [formData, setFormData] = useState({
     paciente_id: '',
     data_atendimento: new Date().toISOString().split('T')[0],
-    tipo_procedimento: '',
+    tipo: '',
     descricao: '',
     valor: '',
     status: 'agendado',
@@ -88,7 +88,7 @@ export default function NovoAtendimentoPage() {
       .single()
 
     if (!usuario?.clinica_id) {
-      setError('Clinica nao encontrada.')
+      setError('Clínica não encontrada.')
       setIsLoading(false)
       return
     }
@@ -100,7 +100,7 @@ export default function NovoAtendimentoPage() {
         paciente_id: formData.paciente_id,
         usuario_id: usuario.id,
         data_atendimento: formData.data_atendimento,
-        tipo_procedimento: formData.tipo_procedimento,
+        tipo: formData.tipo,
         descricao: formData.descricao || null,
         valor: formData.valor ? parseFloat(formData.valor) : null,
         status: formData.status,
@@ -204,12 +204,12 @@ export default function NovoAtendimentoPage() {
                 </div>
 
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="tipo_procedimento">Tipo de Procedimento *</Label>
+                  <Label htmlFor="tipo">Tipo de Procedimento *</Label>
                   <Input
-                    id="tipo_procedimento"
+                    id="tipo"
                     placeholder="Ex: Consulta, Exame, Procedimento"
-                    value={formData.tipo_procedimento}
-                    onChange={(e) => handleChange('tipo_procedimento', e.target.value)}
+                    value={formData.tipo}
+                    onChange={(e) => handleChange('tipo', e.target.value)}
                     required
                     disabled={isLoading}
                   />

@@ -28,7 +28,7 @@ export default async function AdminUsuariosPage() {
 
   const { data: usuario } = await supabase
     .from('usuarios')
-    .select('*, clinica:clinicas(*, plano:planos(*))')
+    .select('id, nome, email, perfil, clinica_id, created_at, clinicas(id, nome, status, stripe_plan_id, stripe_customer_id, stripe_subscription_id, created_at)')
     .eq('id', user.id)
     .single()
 
@@ -42,7 +42,7 @@ export default async function AdminUsuariosPage() {
     .eq('clinica_id', usuario.clinica_id)
     .order('nome')
 
-  const limiteUsuarios = usuario.clinica?.plano?.limite_usuarios || 3
+  const limiteUsuarios = 10 // Default limit, should come from pricing tier
   const totalUsuarios = usuarios?.length || 0
   const podeAdicionar = totalUsuarios < limiteUsuarios
 

@@ -1,37 +1,69 @@
 'use client'
 
-import { useState } from 'react'
-import { UserPlus, Settings, Rocket, HeartHandshake } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { UserPlus, Settings, Rocket, HeartHandshake, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const steps = [
   {
     icon: UserPlus,
     number: '01',
-    title: 'Cadastre sua Clinica',
-    description: 'Crie sua conta em minutos. Basta informar os dados basicos da sua clinica e escolher o plano ideal para voce. Comece com 14 dias gratis.',
+    title: 'Cadastre sua Clínica',
+    description: 'Crie sua conta em minutos. Basta informar os dados básicos da sua clínica e escolher o plano ideal para você. Comece com 14 dias grátis.',
   },
   {
     icon: Settings,
     number: '02',
     title: 'Configure seu Ambiente',
-    description: 'Personalize o sistema de acordo com as necessidades da sua clinica. Adicione usuarios, configure permissoes e importe seus dados existentes.',
+    description: 'Personalize o sistema de acordo com as necessidades da sua clínica. Adicione usuários, configure permissões e importe seus dados existentes.',
   },
   {
     icon: Rocket,
     number: '03',
     title: 'Comece a Usar',
-    description: 'Sua clinica ja esta pronta para operar. Cadastre pacientes, agende consultas, registre atendimentos e acompanhe metricas em tempo real.',
+    description: 'Sua clínica já está pronta para operar. Cadastre pacientes, agende consultas, registre atendimentos e acompanhe métricas em tempo real.',
   },
   {
     icon: HeartHandshake,
     number: '04',
     title: 'Conte com Nosso Suporte',
-    description: 'Estamos sempre disponiveis para ajudar. Tire duvidas, receba dicas de uso e tenha uma equipe dedicada ao sucesso da sua clinica.',
+    description: 'Estamos sempre disponíveis para ajudar. Tire dúvidas, receba dicas de uso e tenha uma equipe dedicada ao sucesso da sua clínica.',
   },
 ]
 
 export function HowItWorks() {
   const [activeStep, setActiveStep] = useState(0)
+  const [isAutoPlay, setIsAutoPlay] = useState(true)
+
+  // Auto-advance carousel
+  useEffect(() => {
+    if (!isAutoPlay) return
+
+    const timer = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % steps.length)
+    }, 5000) // 5 segundos
+
+    return () => clearInterval(timer)
+  }, [isAutoPlay])
+
+  const goToStep = (index: number) => {
+    setActiveStep(index)
+    setIsAutoPlay(false)
+    // Retomar autoplay depois de 1 segundo
+    setTimeout(() => setIsAutoPlay(true), 1000)
+  }
+
+  const previousStep = () => {
+    setActiveStep((prev) => (prev - 1 + steps.length) % steps.length)
+    setIsAutoPlay(false)
+    setTimeout(() => setIsAutoPlay(true), 1000)
+  }
+
+  const nextStep = () => {
+    setActiveStep((prev) => (prev + 1) % steps.length)
+    setIsAutoPlay(false)
+    setTimeout(() => setIsAutoPlay(true), 1000)
+  }
 
   return (
     <section id="como-funciona" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-muted/20">
@@ -44,7 +76,7 @@ export function HowItWorks() {
             Como Funciona
           </span>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground text-balance">
-            Mostramos exatamente o que fazer. E configuramos para voce.
+            Mostramos exatamente o que fazer. E configuramos para você.
           </h2>
           <p className="mt-6 text-xl text-muted-foreground">
             Tudo em menos de uma semana.
@@ -52,16 +84,16 @@ export function HowItWorks() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Steps list */}
-          <div className="space-y-4">
+          {/* Steps list - Desktop */}
+          <div className="space-y-4 hidden lg:block">
             {steps.map((step, index) => (
               <button
                 key={step.number}
                 type="button"
-                onClick={() => setActiveStep(index)}
+                onClick={() => goToStep(index)}
                 className={`w-full text-left p-6 rounded-2xl transition-all duration-300 ${
                   activeStep === index 
-                    ? 'glass-card' 
+                    ? 'glass-card ring-2 ring-primary/50' 
                     : 'hover:bg-muted/50'
                 }`}
               >
@@ -95,27 +127,17 @@ export function HowItWorks() {
             ))}
           </div>
 
-          {/* Visual card */}
-          <div className="glass-card p-8 rounded-3xl lg:p-12">
-            <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-32 h-32 bg-primary/20 rounded-full blur-2xl animate-pulse" />
-              </div>
-              <div className="relative z-10 text-center p-8">
-                <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-primary text-primary-foreground mx-auto mb-6">
-                  {(() => {
-                    const StepIcon = steps[activeStep].icon
-                    return <StepIcon className="h-10 w-10" />
-                  })()}
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-3">
-                  {steps[activeStep].title}
-                </h3>
-                <p className="text-muted-foreground max-w-sm">
-                  {steps[activeStep].description}
-                </p>
-              </div>
-            </div>
+          {/* Visual card with video */}
+          <div className="glass-card rounded-3xl overflow-hidden">
+            <video
+              src="/example.mp4"
+              controls
+              className="w-full h-auto rounded-3xl"
+              autoPlay
+              loop
+              muted
+              style={{ maxHeight: '600px' }}
+            />
           </div>
         </div>
       </div>

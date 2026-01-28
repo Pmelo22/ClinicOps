@@ -21,7 +21,7 @@ export default async function MasterDashboardPage() {
 
   const { data: usuario } = await supabase
     .from('usuarios')
-    .select('*')
+    .select('id, nome, email, perfil, clinica_id, created_at, clinicas(id, nome, status, stripe_plan_id, stripe_customer_id, stripe_subscription_id, created_at)')
     .eq('id', user.id)
     .single()
 
@@ -42,7 +42,7 @@ export default async function MasterDashboardPage() {
     supabase.from('clinicas').select('*', { count: 'exact', head: true }).eq('status', 'trial'),
     supabase.from('usuarios').select('*', { count: 'exact', head: true }),
     supabase.from('clinicas')
-      .select('*, plano:planos(nome)')
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(5),
   ])

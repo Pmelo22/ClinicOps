@@ -41,6 +41,7 @@ export async function POST(req: Request) {
             .update({
               stripe_customer_id: session.customer as string,
               stripe_subscription_id: session.subscription as string,
+              stripe_plan_id: planId,
               status: "ativa",
             })
             .eq("id", clinicaId);

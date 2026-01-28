@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { HeartPulse, ArrowLeft, ArrowRight, Loader2, Building2, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Loader2, Building2, Check } from 'lucide-react'
 import { createClinic } from '@/app/actions/auth'
 
 const ESTADOS_BRASIL = [
@@ -74,10 +74,7 @@ export default function CriarClinicaPage() {
       <div className="w-full max-w-2xl relative py-8">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-            <HeartPulse className="h-6 w-6 text-primary" />
-          </div>
-          <span className="text-2xl font-bold text-foreground">ClinicOps</span>
+          <img src="/logo-new.svg" alt="ClinicOps" className="h-12" />
         </Link>
 
         {/* Back button */}
@@ -96,10 +93,10 @@ export default function CriarClinicaPage() {
               <Building2 className="h-8 w-8 text-primary" />
             </div>
             <CardTitle className="text-2xl font-bold text-foreground">
-              Cadastrar sua clinica
+              Cadastrar sua clínica
             </CardTitle>
             <CardDescription className="text-muted-foreground text-base">
-              Preencha os dados da sua clinica para comecar a usar o ClinicOps
+              Preencha os dados da sua clínica para começar a usar o ClinicOps
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -119,11 +116,11 @@ export default function CriarClinicaPage() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="nome">Nome da clinica *</Label>
+                    <Label htmlFor="nome">Nome da clínica *</Label>
                     <Input
                       id="nome"
                       name="nome"
-                      placeholder="Ex: Clinica Saude Total"
+                      placeholder="Ex: Clínica Saúde Total"
                       required
                       disabled={isLoading}
                       className="h-12 rounded-xl bg-background/50"
@@ -165,16 +162,16 @@ export default function CriarClinicaPage() {
               <div className="space-y-4">
                 <h3 className="font-semibold text-foreground flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs">2</span>
-                  Endereco (opcional)
+                  Endereço (opcional)
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="endereco">Endereco</Label>
+                    <Label htmlFor="endereco">Endereço</Label>
                     <Input
                       id="endereco"
                       name="endereco"
-                      placeholder="Rua, numero, complemento"
+                      placeholder="Rua, número, complemento"
                       disabled={isLoading}
                       className="h-12 rounded-xl bg-background/50"
                     />
@@ -227,7 +224,7 @@ export default function CriarClinicaPage() {
               <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
                 <h4 className="font-medium text-foreground mb-3 flex items-center gap-2">
                   <Check className="h-4 w-4 text-primary" />
-                  Seu periodo de teste inclui:
+                  Seu período de teste inclui:
                 </h4>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
@@ -240,11 +237,11 @@ export default function CriarClinicaPage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    Ate 5 usuarios
+                    Até 5 usuários
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    Sem cartao de credito
+                    Sem cartão de crédito
                   </li>
                 </ul>
               </div>
@@ -257,27 +254,27 @@ export default function CriarClinicaPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Criando clinica...
+                    Criando clínica...
                   </>
                 ) : (
                   <>
-                    Criar clinica e comecar
+                    Criar clínica e começar
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                Ao criar sua clinica, voce concorda com nossos{' '}
-                <Link href="#" className="underline hover:text-foreground">Termos de Servico</Link>
+                Ao criar sua clínica, você concorda com nossos{' '}
+                <Link href="#" className="underline hover:text-foreground">Termos de Serviço</Link>
               </p>
             </form>
 
             <div className="text-center pt-6 mt-6 border-t border-border/50">
               <p className="text-sm text-muted-foreground">
-                Ja tem um codigo de convite?{' '}
+                Já tem um código de convite?{' '}
                 <Link href="/onboarding/entrar-clinica" className="text-primary hover:underline font-medium">
-                  Entrar em clinica existente
+                  Entrar em clínica existente
                 </Link>
               </p>
             </div>

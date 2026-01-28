@@ -34,7 +34,7 @@ export default function CadastroSucessoPage() {
             </div>
             <p className="text-sm text-muted-foreground">
               Enviamos um link de confirmacao para o seu email. 
-              Clique no link para ativar sua conta e comecar a usar o sistema.
+              Clique no link para ativar sua conta e começar a usar o sistema.
             </p>
           </div>
           <p className="text-sm text-muted-foreground">

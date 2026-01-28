@@ -28,11 +28,6 @@ export async function GET(request: Request) {
             data: { onboarding_status: 'completed' }
           })
           
-          if (usuario.perfil === 'master') {
-            return NextResponse.redirect(`${origin}/dashboard/master`)
-          } else if (usuario.perfil === 'admin') {
-            return NextResponse.redirect(`${origin}/dashboard/admin`)
-          }
           return NextResponse.redirect(`${origin}/dashboard`)
         }
 

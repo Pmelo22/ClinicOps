@@ -34,7 +34,7 @@ export default async function AtendimentosPage({
 
   const { data: usuario } = await supabase
     .from('usuarios')
-    .select('*, clinica:clinicas(*)')
+    .select('id, nome, email, perfil, clinica_id, created_at, clinicas(id, nome, status, stripe_plan_id, stripe_customer_id, stripe_subscription_id, created_at)')
     .eq('id', user.id)
     .single()
 
@@ -132,7 +132,7 @@ export default async function AtendimentosPage({
                             {atendimento.paciente?.nome || 'N/A'}
                           </Link>
                         </td>
-                        <td className="py-3 px-4 text-muted-foreground">{atendimento.tipo_procedimento}</td>
+                        <td className="py-3 px-4 text-muted-foreground">{atendimento.tipo}</td>
                         <td className="py-3 px-4 text-muted-foreground">{atendimento.usuario?.nome || 'N/A'}</td>
                         <td className="py-3 px-4">
                           {getStatusBadge(atendimento.status)}

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { HeartPulse, Mail, RefreshCw, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react'
+import { Mail, RefreshCw, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { resendVerificationEmail } from '@/app/actions/auth'
 
@@ -86,10 +86,7 @@ export default function VerificarEmailPage() {
       <div className="w-full max-w-lg relative">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-            <HeartPulse className="h-6 w-6 text-primary" />
-          </div>
-          <span className="text-2xl font-bold text-foreground">ClinicOps</span>
+          <img src="/logo-new.svg" alt="ClinicOps" className="h-12" />
         </Link>
 
         {/* Progress indicator */}

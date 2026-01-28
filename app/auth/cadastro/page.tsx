@@ -170,7 +170,7 @@ export default function CadastroPage() {
 
             {/* Benefits */}
             <div className="mt-8 pt-6 border-t border-border/50">
-              <p className="text-xs text-muted-foreground mb-3 font-medium">O que voce recebe:</p>
+              <p className="text-xs text-muted-foreground mb-3 font-medium">O que você recebe:</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   '14 dias gratis',
@@ -197,7 +197,7 @@ export default function CadastroPage() {
         </Card>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Ao continuar, voce concorda com nossos{' '}
+          Ao continuar, você concorda com nossos{' '}
           <Link href="#" className="underline hover:text-foreground">
             Termos de Servico
           </Link>{' '}

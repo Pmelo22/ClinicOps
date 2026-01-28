@@ -69,7 +69,7 @@ export interface Appointment {
   paciente_id: string
   usuario_id: string
   data_atendimento: string
-  tipo_procedimento: string
+  tipo: string
   descricao: string | null
   valor: number | null
   status: string
