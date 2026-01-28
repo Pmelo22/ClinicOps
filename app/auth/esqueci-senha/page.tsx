@@ -79,10 +79,10 @@ export default function EsqueciSenhaPage() {
       
       <div className="w-full max-w-md relative">
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
-            <HeartPulse className="h-6 w-6 text-primary" />
-          </div>
-          <img src="/logo-new.svg" alt="ClinicOps" className="h-12" /
+          <img src="/logo-new.svg" alt="ClinicOps" className="h-12" />
+        </Link>
+
+        <Card className="glass-card border-0 shadow-xl">
           <CardHeader className="text-center pb-2">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
